@@ -1,3 +1,4 @@
+import CommonPortableTextComponent from "@/components/common/PortableTextComponent";
 import { PortableText } from "@portabletext/react";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -88,13 +89,13 @@ export default async function BlogDetailsPage({ params }: Props) {
 
   return (
     <article className="container mx-auto px-4 py-12 max-w-3xl">
-      <Link href="/blogs" className="text-blue-600 hover:underline mb-8 inline-block">
+      <Link href="/blogs" className="text-primary hover:text-primary/80 transition-colors mb-8 inline-block">
         &larr; Back to Blogs
       </Link>
 
       <header className="mb-10">
-        <h1 className="text-4xl md:text-5xl font-bold mb-4">{blog.title}</h1>
-        <div className="text-gray-500">
+        <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">{blog.title}</h1>
+        <div className="text-muted-foreground">
           <time dateTime={blog.publishedAt}>
             {new Date(blog.publishedAt).toLocaleDateString("en-US", {
               year: "numeric",
@@ -106,7 +107,7 @@ export default async function BlogDetailsPage({ params }: Props) {
       </header>
 
       {blog.mainImage && (
-        <div className="mb-10 rounded-xl overflow-hidden shadow-md relative w-full aspect-video">
+        <div className="mb-10 rounded-xl overflow-hidden shadow-md relative w-full aspect-video border border-border">
           <Image
             src={blog.mainImage}
             alt={blog.imageAlt || blog.title}
@@ -118,11 +119,11 @@ export default async function BlogDetailsPage({ params }: Props) {
         </div>
       )}
 
-      <div className="prose prose-lg max-w-none text-gray-800">
+      <div className="max-w-none text-foreground">
         {blog.body && blog.body.length > 0 ? (
-          <PortableText value={blog.body} />
+          <PortableText components={CommonPortableTextComponent} value={blog.body} />
         ) : (
-          <p>This post has no additional content.</p>
+          <p className="text-muted-foreground italic">This post has no additional content.</p>
         )}
       </div>
     </article>

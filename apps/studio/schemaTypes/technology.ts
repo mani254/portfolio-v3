@@ -28,6 +28,13 @@ export default defineType({
       rows: 3,
       description: "A small description of this technology.",
     }),
+    defineField({
+      name: "isBlack",
+      title: "Is Black / Needs Invert?",
+      type: "boolean",
+      initialValue: false,
+      description: "If true, this logo will be inverted in dark mode (useful for solid black logos).",
+    }),
   ],
   preview: {
     select: {
