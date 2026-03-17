@@ -1,9 +1,9 @@
-import { cn } from '@/lib/utils'
 import GithubIcon from '@/public/images/github.png'
 import { ExternalLink } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Project } from 'sanity-lib'
+import TechPill from '../common/TechPill'
 import { Button } from '../ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 const HeaderSection = ({ project }: { project: Project }) => {
@@ -71,14 +71,7 @@ const HeaderSection = ({ project }: { project: Project }) => {
       {project.toolsAndLanguages && project.toolsAndLanguages.length > 0 && (
         <div className="flex flex-wrap gap-4">
           {project.toolsAndLanguages.map((tech) => (
-            <div key={tech.id} className="flex items-center gap-2 px-4 py-1.5 bg-card border border-border rounded-full shadow-sm">
-              {tech.image && (
-                <div className="w-6 h-6 relative shrink-0">
-                  <Image src={tech.image} alt={tech.title} fill className={cn("object-contain", tech.isBlack && 'dark:invert')} />
-                </div>
-              )}
-              <span className="text-xs font-medium text-foreground">{tech.title}</span>
-            </div>
+            <TechPill key={tech.id} tech={tech} />
           ))}
         </div>
       )}

@@ -1,5 +1,5 @@
 import { client } from "./client";
-import { getImageUrl } from "./image";
+import { getImageUrl, urlFor } from "./image";
 import type { BlogPost, Project, SanityBlog, SanityProject, SanityTechnology, Technology } from "./types";
 
 export const ALL_BLOGS_QUERY = `*[_type == "blog" && defined(publishedAt)] | order(publishedAt desc) {
@@ -68,7 +68,16 @@ export const ALL_PROJECTS_QUERY = `*[_type == "project"] | order(startDate desc)
   title,
   "slug": slug.current,
   overview,
-  mainImage
+  mainImage,
+  keyFeatures,
+  toolsAndLanguages[]->{
+    _id,
+    title,
+    image,
+    description,
+    isBlack
+  },
+
 }`;
 
 export const PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.current == $slug][0] {
@@ -101,7 +110,7 @@ function transformTechnology(sanityTech: SanityTechnology): Technology {
   return {
     id: sanityTech._id,
     title: sanityTech.title,
-    image: sanityTech.image ? getImageUrl(sanityTech.image, 200) : undefined,
+    image: sanityTech.image ? urlFor(sanityTech.image).width(200).url() : undefined,
     description: sanityTech.description,
     isBlack: sanityTech.isBlack,
   };

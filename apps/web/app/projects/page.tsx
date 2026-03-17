@@ -1,5 +1,5 @@
 import SmoothScroll from "@/components/common/SmoothScroll";
-import Link from "next/link";
+import ScrollingProjects from "@/components/projects/ScrollingProjects";
 import { getAllProjects } from "sanity-lib";
 
 export const revalidate = 3600;
@@ -9,35 +9,51 @@ export const metadata = {
   description: "A list of all my projects.",
 };
 
+export interface Technology {
+  id: string
+  title: string
+  image?: string,
+  isBlack?: boolean
+}
+
+export interface ProjectFeature {
+  question: string,
+  answer?: unknown[]
+}
+
+export interface FormatedProject {
+  _id: string
+  title: string
+  slug: string
+  overview?: string
+  mainImage: string
+  keyFeatures?: ProjectFeature[]
+  toolsAndLanguages?: Technology[]
+}
+
 export default async function ProjectsPage() {
   const projects = await getAllProjects();
 
+  const formatedProjects: FormatedProject[] = projects.map((project) => ({
+    _id: project.id,
+    title: project.title,
+    slug: project.slug,
+    overview: project.overview,
+    mainImage: project.mainImage || "",
+    keyFeatures: project.keyFeatures,
+    toolsAndLanguages: project.toolsAndLanguages,
+  }));
+
   return (
     <SmoothScroll>
-      <div className="container mx-auto px-4 py-12 max-w-5xl">
-        <header className="mb-12">
+      <div>
+        <header className="mb-12 min-h-[500px]">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">Projects</h1>
           <p className="text-xl text-muted-foreground">
             A collection of my recent work and personal projects.
           </p>
         </header>
-
-        {projects.length > 0 ? (
-          <ul className="space-y-4">
-            {projects.map((project) => (
-              <li key={project.id}>
-                <Link
-                  href={`/projects/${project.slug}`}
-                  className="text-2xl font-semibold text-primary hover:underline hover:text-primary/80 transition-colors"
-                >
-                  {project.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-muted-foreground italic">No projects found.</p>
-        )}
+        <ScrollingProjects projects={formatedProjects} />
       </div>
     </SmoothScroll>
   );

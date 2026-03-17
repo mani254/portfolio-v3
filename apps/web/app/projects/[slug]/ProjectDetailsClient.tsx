@@ -23,9 +23,9 @@ export default function ProjectDetailsClient({ project }: { project: Project }) 
   const sections: Section[] = [
     { id: "overview", label: "Overview", condition: true },
     { id: "screenshots", label: "Screenshots", condition: !!(project.mainImage || project.additionalImage1 || project.additionalImage2) },
-    { id: "description", label: "Description", condition: !!project.description && project.description.length > 0 },
     { id: "key-features", label: "Key Features", condition: !!project.keyFeatures && project.keyFeatures.length > 0 },
     { id: "role", label: "Role & Responsibilities", condition: !!project.roleDescription && project.roleDescription.length > 0 },
+    { id: "description", label: "Description", condition: !!project.description && project.description.length > 0 },
     { id: "tech-stack", label: "Tech Stack Detail", condition: !!project.techStackDetails && project.techStackDetails.length > 0 },
     { id: "challenges-learnings", label: "Challenges & Learnings", condition: !!project.challengesAndLearnings && project.challengesAndLearnings.length > 0 },
   ];
@@ -76,17 +76,8 @@ export default function ProjectDetailsClient({ project }: { project: Project }) 
               </section>
             )}
 
-            {/* Section 3: Description */}
-            {project.description && project.description.length > 0 && (
-              <section id="description" className="scroll-mt-24">
-                <h2 className="section-heading">Detailed Description</h2>
-                <div className="max-w-none text-foreground">
-                  <PortableText components={CommonPortableTextComponent} value={project.description} />
-                </div>
-              </section>
-            )}
 
-            {/* Section 4: Key Features (Accordion Style) */}
+            {/* Section 3: Key Features (Accordion Style) */}
             {project.keyFeatures && project.keyFeatures.length > 0 && (
               <section id="key-features" className="scroll-mt-24">
                 <h2 className="section-heading">Key Features</h2>
@@ -103,12 +94,22 @@ export default function ProjectDetailsClient({ project }: { project: Project }) 
               </section>
             )}
 
-            {/* Section 5: Role Description */}
+            {/* Section 4: Role Description */}
             {project.roleDescription && project.roleDescription.length > 0 && (
               <section id="role" className="scroll-mt-24">
                 <h2 className="section-heading">Role & Responsibilities</h2>
                 <div className="max-w-none text-foreground">
                   <PortableText components={CommonPortableTextComponent} value={project.roleDescription} />
+                </div>
+              </section>
+            )}
+
+            {/* Section 5: Description */}
+            {project.description && project.description.length > 0 && (
+              <section id="description" className="scroll-mt-24">
+                <h2 className="section-heading">Detailed Description</h2>
+                <div className="max-w-none text-foreground">
+                  <PortableText components={CommonPortableTextComponent} value={project.description} />
                 </div>
               </section>
             )}
