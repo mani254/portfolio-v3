@@ -8,6 +8,7 @@ import { useTheme } from "next-themes"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { Button } from "../ui/button"
 import ProjectContent from "./ProjectContent"
 
 interface Props {
@@ -78,18 +79,13 @@ export default function MobileProjects({ projects }: Props) {
               <div className="px-2 pb-2 space-y-4">
                 <ProjectContent project={project} index={index} isMobile={true} />
 
-                <button
+                <Button
                   onClick={() => router.push(`/projects/${project.slug}`)}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl py-3.5 text-sm font-semibold transition-all duration-300 active:scale-95"
-                  style={{
-                    backgroundColor: colors.boxColor,
-                    color: currentTheme === 'dark' ? '#fff' : '#000',
-                    boxShadow: `0 10px 20px -10px ${colors.boxColor}`
-                  }}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl  text-sm font-semibold transition-all duration-300 active:scale-95 py-4"
                 >
                   View Project Details
                   <ArrowUpRight className="h-4 w-4" />
-                </button>
+                </Button>
               </div>
             </div>
           </motion.div>

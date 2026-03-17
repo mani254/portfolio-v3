@@ -20,12 +20,12 @@ export default function ProjectIntro() {
   const y1 = useTransform(scrollYProgress, [0, 1], [0, -40])
 
   return (
-    <section ref={containerRef} className="relative overflow-hidden">
+    <section ref={containerRef} className="relative overflow-hidden -mt-1">
 
       {/* Subtle Background Glow */}
       <motion.div
         style={{ y: y1 }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[500px] md:h-[400px] bg-primary/5 blur-[100px] rounded-full -z-10"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] md:w-[500px] md:h-[400px] bg-primary/5 blur-[100px] rounded-full"
       />
 
       <div className="container">
