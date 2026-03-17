@@ -154,7 +154,7 @@ const CommonPortableTextComponent: PortableTextComponents = {
       return (
         <div className="my-8 overflow-hidden rounded-xl border border-border">
           <Image
-            alt={value.alt || "Blog image"}
+            alt={value.alt || "Image"}
             className="h-auto w-full object-cover"
             height={600}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"

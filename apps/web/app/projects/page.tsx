@@ -1,4 +1,7 @@
+import CommonBanner from "@/components/common/CommonBanner";
 import SmoothScroll from "@/components/common/SmoothScroll";
+import MobileProjects from "@/components/projects/MobileProjects";
+import ProjectIntro from "@/components/projects/ProjectIntro";
 import ScrollingProjects from "@/components/projects/ScrollingProjects";
 import { getAllProjects } from "sanity-lib";
 
@@ -47,13 +50,18 @@ export default async function ProjectsPage() {
   return (
     <SmoothScroll>
       <div>
-        <header className="mb-12 min-h-[500px]">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">Projects</h1>
-          <p className="text-xl text-muted-foreground">
-            A collection of my recent work and personal projects.
-          </p>
-        </header>
-        <ScrollingProjects projects={formatedProjects} />
+        <CommonBanner title="My Work" />
+        <ProjectIntro />
+        {/* desktop projects ui scrollable ui*/}
+        <div className="hidden md:block">
+          <ScrollingProjects projects={formatedProjects} />
+        </div>
+
+        {/* mobile projects ui */}
+        <section className="block md:hidden">
+          <MobileProjects projects={formatedProjects} />
+        </section>
+
       </div>
     </SmoothScroll>
   );

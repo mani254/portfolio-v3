@@ -16,13 +16,13 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"),
   title: {
-    default: "Portfolio & Blog",
+    default: "Portfolio",
     template: "%s | Portfolio",
   },
-  description: "A professional portfolio showcasing projects, insights, and blog posts.",
+  description: "A professional portfolio showcasing projects, insights, and posts.",
   openGraph: {
-    title: "Portfolio & Blog",
-    description: "A professional portfolio showcasing projects, insights, and blog posts.",
+    title: "Portfolio",
+    description: "A professional portfolio showcasing projects, insights, and posts.",
     url: "/",
     siteName: "Portfolio UI",
     images: [
@@ -38,8 +38,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Portfolio & Blog",
-    description: "A professional portfolio showcasing projects, insights, and blog posts.",
+    title: "Portfolio",
+    description: "A professional portfolio showcasing projects, insights, and posts.",
   },
   robots: {
     index: true,

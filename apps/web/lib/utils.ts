@@ -18,31 +18,68 @@ export function slugify(text: string): string {
 
 export const PROJECT_SECTION_COLORS = [
   {
-    backgroundColor: "#F8BBD0",
-    boxColor: "#F48FB1",
-    cursorColor: "#E91E63",
+    light: {
+      backgroundColor: "#F8BBD0",
+      boxColor: "#F48FB1",
+      cursorColor: "#E91E63",
+    },
+    dark: {
+      backgroundColor: "#1a1013",
+      boxColor: "#3d1c24",
+      cursorColor: "#ff4081",
+    }
   },
   {
-    backgroundColor: "#D1C4E9",
-    boxColor: "#9575CD",
-    cursorColor: "#673AB7",
+    light: {
+      backgroundColor: "#D1C4E9",
+      boxColor: "#9575CD",
+      cursorColor: "#673AB7",
+    },
+    dark: {
+      backgroundColor: "#110e1a",
+      boxColor: "#211a3d",
+      cursorColor: "#b39ddb",
+    }
   },
   {
-    backgroundColor: "#FFCC80",
-    boxColor: "#FFB74D",
-    cursorColor: "#F57C00",
-  }, {
-    backgroundColor: "#E1BEE7",
-    boxColor: "#CE93D8",
-    cursorColor: "#8E24AA",
-  }, {
-    backgroundColor: "#BBDEFB",
-    boxColor: "#64B5F6",
-    cursorColor: "#1E88E5",
+    light: {
+      backgroundColor: "#FFCC80",
+      boxColor: "#FFB74D",
+      cursorColor: "#F57C00",
+    },
+    dark: {
+      backgroundColor: "#1a150e",
+      boxColor: "#3d2e1c",
+      cursorColor: "#ffb74d",
+    }
+  },
+  {
+    light: {
+      backgroundColor: "#E1BEE7",
+      boxColor: "#CE93D8",
+      cursorColor: "#8E24AA",
+    },
+    dark: {
+      backgroundColor: "#16111a",
+      boxColor: "#2d1c3d",
+      cursorColor: "#e1bee7",
+    }
+  },
+  {
+    light: {
+      backgroundColor: "#BBDEFB",
+      boxColor: "#64B5F6",
+      cursorColor: "#1E88E5",
+    },
+    dark: {
+      backgroundColor: "#0e131a",
+      boxColor: "#1c2a3d",
+      cursorColor: "#90caf9",
+    }
   }
-
 ]
 
-export const getProjectColor = (index: number) => {
-  return PROJECT_SECTION_COLORS[index % PROJECT_SECTION_COLORS.length]
+export const getProjectColor = (index: number, theme: string = "light") => {
+  const color = PROJECT_SECTION_COLORS[index % PROJECT_SECTION_COLORS.length];
+  return theme === "dark" ? color.dark : color.light;
 }

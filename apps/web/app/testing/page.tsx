@@ -60,7 +60,7 @@ export default function TestingPage() {
   const { theme, setTheme } = useTheme()
 
   return (
-    <div className="container mx-auto py-20 px-4 space-y-16">
+    <div className="container space-y-16">
       <div className="flex items-center justify-between border-b pb-8">
         <h1 className="text-4xl font-bold">Design System Testing</h1>
         <Button

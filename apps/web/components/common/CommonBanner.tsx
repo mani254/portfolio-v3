@@ -1,17 +1,20 @@
-import ProjectBannerImg from "@/public/images/projects-banner.jpg";
+"use client";
+
+import BannerImg from "@/public/images/projects-banner.jpg";
 import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 
-const ProjectBanner = () => {
+const CommonBanner = ({ title }: { title: string }) => {
+  const router = useRouter();
   return (
     <section className="relative w-full h-[25vh] min-h-[180px] max-h-[300px] overflow-hidden">
 
       {/* Background Image */}
       <div className="absolute inset-0 -z-10">
         <Image
-          src={ProjectBannerImg}
+          src={BannerImg}
           alt="Project Banner"
           fill
           priority
@@ -25,18 +28,19 @@ const ProjectBanner = () => {
       <div className="container">
 
         {/* Back Button - Top Left */}
-        <Link
-          href="/projects"
-          className="relative z-10 flex items-center gap-2 text-foreground hover:text-primary transition-colors"
+
+        <button
+          onClick={() => router.back()}
+          className="relative z-10 flex items-center gap-2 text-foreground hover:text-primary transition-colors cursor-pointer"
         >
           <ArrowLeft className="h-5 w-5" />
           <span className="font-medium">Back</span>
-        </Link>
+        </button>
 
         {/* Centered Title */}
         <div className="absolute inset-0 flex items-center justify-center">
           <h1 className="text-3xl md:text-5xl font-bold text-foreground/50">
-            Project Details
+            {title}
           </h1>
         </div>
 
@@ -45,4 +49,4 @@ const ProjectBanner = () => {
   );
 };
 
-export default ProjectBanner;
+export default CommonBanner;

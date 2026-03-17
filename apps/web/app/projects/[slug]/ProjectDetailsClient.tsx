@@ -60,7 +60,7 @@ export default function ProjectDetailsClient({ project }: { project: Project }) 
   return (
     <>
       <ProjectBanner />
-      <div className="container mx-auto px-4 py-12 max-w-7xl">
+      <div className="container">
         <div className="flex flex-col lg:flex-row gap-12">
           {/* Left Column - Content */}
           <div className="lg:w-3/4 space-y-14  pb-24">
