@@ -113,6 +113,21 @@
   --radius-xl: calc(var(--radius) + 4px);
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-gradient-x: gradient-x 3s ease infinite;
+
+  @keyframes gradient-x {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+
+    100% {
+      background-position: 0% 50%;
+    }
+  }
 
   @keyframes accordion-down {
     from {
@@ -217,4 +232,19 @@ html.lenis body {
 
 section {
   @apply py-8 md:py-12
+}
+
+.page-section, footer {
+  @apply py-12 md:py-18
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

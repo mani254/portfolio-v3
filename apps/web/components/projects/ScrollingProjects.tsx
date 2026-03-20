@@ -160,7 +160,8 @@ export default function ScrollingProjects({ projects }: Props) {
   if (!mounted) return <div className="min-h-screen" />
 
   return (
-    <div ref={bgRef} className="transition-colors duration-500">
+    <div>
+      <div ref={bgRef} className="w-full h-full fixed inset-0 transition-colors duration-500 -z-10 overflow-hidden"></div>
       <div
         ref={containerRef}
         className="flex relative container gap-5"
@@ -208,8 +209,8 @@ export default function ScrollingProjects({ projects }: Props) {
           style={{
             left: 0,
             top: 0,
-            width: "140px",
-            height: "140px",
+            width: "80px",
+            height: "80px",
             backgroundColor: hoveredIndex !== null
               ? `${getProjectColor(hoveredIndex, currentTheme).cursorColor}44`
               : "rgba(255, 255, 255, 0.1)",
@@ -223,7 +224,7 @@ export default function ScrollingProjects({ projects }: Props) {
         >
           <div className="relative flex items-center justify-center w-full h-full">
             <span
-              className="text-xs font-bold uppercase tracking-[0.25em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] text-center"
+              className="text-xs font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] text-center"
             >
               View <br /> Details
             </span>

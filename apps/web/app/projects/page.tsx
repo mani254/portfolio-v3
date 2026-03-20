@@ -1,4 +1,5 @@
 import CommonBanner from "@/components/common/CommonBanner";
+import CtaPro from "@/components/common/Cta";
 import SmoothScroll from "@/components/common/SmoothScroll";
 import MobileProjects from "@/components/projects/MobileProjects";
 import ProjectIntro from "@/components/projects/ProjectIntro";
@@ -53,7 +54,7 @@ export default async function ProjectsPage() {
         <CommonBanner title="My Work" />
         <ProjectIntro />
         {/* desktop projects ui scrollable ui*/}
-        <div className="hidden md:block">
+        <div className="hidden md:block ">
           <ScrollingProjects projects={formatedProjects} />
         </div>
 
@@ -61,6 +62,8 @@ export default async function ProjectsPage() {
         <section className="block md:hidden">
           <MobileProjects projects={formatedProjects} />
         </section>
+
+        <CtaPro />
 
       </div>
     </SmoothScroll>

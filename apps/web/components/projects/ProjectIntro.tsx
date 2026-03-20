@@ -2,6 +2,7 @@
 
 import { motion, useScroll, useTransform } from "framer-motion"
 import { useRef } from "react"
+import SectionHeading from "../common/SectionHeading"
 
 const stats = [
   { label: "Completed", value: "20+", delay: 0 },
@@ -20,7 +21,7 @@ export default function ProjectIntro() {
   const y1 = useTransform(scrollYProgress, [0, 1], [0, -40])
 
   return (
-    <section ref={containerRef} className="relative overflow-hidden -mt-1">
+    <section ref={containerRef} className="page-section relative -mt-1">
 
       {/* Subtle Background Glow */}
       <motion.div
@@ -34,27 +35,7 @@ export default function ProjectIntro() {
           {/* Content: Kinetic Typography */}
           <div className="space-y-4 md:space-y-6 w-full">
 
-            <h2 className="text-3xl md:text-5xl font-black uppercase italic text-center leading-[0.9] tracking-tight py-4">
-              <motion.span
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-                className="block"
-              >
-                Explore
-              </motion.span>
-
-              <motion.span
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-                className="block bg-linear-to-r from-primary to-purple-500 bg-clip-text text-transparent"
-              >
-                My Projects
-              </motion.span>
-            </h2>
+            <SectionHeading heading="Explore" spanContent="My Projects" center={true}></SectionHeading>
 
             <motion.p
               initial={{ opacity: 0 }}

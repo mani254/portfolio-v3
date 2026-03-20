@@ -1,7 +1,9 @@
 
 import { FormatedProject } from "@/app/projects/page"
 import { cn } from "@/lib/utils"
+import { ArrowUpRight } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 
 interface Props {
   project: FormatedProject,
@@ -16,11 +18,28 @@ export default function ProjectContent({ project, index, isMobile }: Props) {
 
   return (
     <div className="space-y-4 max-w-md ">
-      <div className="space-y-3">
-        <h2 className="section-title mb-0 font-bold tracking-tight text-foreground">
-          {project.title}
-        </h2>
-        <div className="w-12 h-1 bg-primary rounded-full opacity-80" />
+      <div className="flex justify-between items-center">
+        <div className="space-y-3">
+          <h2 className="section-title mb-0 font-bold tracking-tight text-foreground">
+            {project.title}
+          </h2>
+          <div className="w-12 h-1 bg-primary rounded-full opacity-80" />
+        </div>
+        {!isMobile && (
+          <Link
+            href={`/projects/${project.slug}`}
+            className={cn(
+              "group/link flex items-center gap-2 px-4 py-2 rounded-full border border-border/50",
+              "bg-white/40 backdrop-blur-md dark:bg-white/5 dark:hover:bg-white/10",
+              "transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+            )}
+          >
+            <span className="text-[10px] font-bold tracking-widest text-foreground/70 group-hover/link:text-foreground transition-colors uppercase">
+              View Details
+            </span>
+            <ArrowUpRight className="w-3.5 h-3.5 text-primary group-hover/link:rotate-45 transition-transform duration-300" />
+          </Link>
+        )}
       </div>
 
       {project.overview && (

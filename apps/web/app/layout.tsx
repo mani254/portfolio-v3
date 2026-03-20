@@ -57,6 +57,8 @@ export const metadata: Metadata = {
 };
 
 import { ThemeProvider } from "@/components/theme-provider";
+import Footer from "@/components/layout/Footer";
+import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
@@ -75,6 +77,8 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           {children}
+          <Footer />
+          <Toaster richColors position="top-right" />
         </ThemeProvider>
       </body>
     </html>
