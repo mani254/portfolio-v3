@@ -1,3 +1,4 @@
+"use client"
 import { motion } from "framer-motion"
 import { Calendar } from "lucide-react"
 import * as React from "react"
@@ -43,7 +44,7 @@ export function ScheduleMeetingButton() {
         title="Schedule a Meeting"
         description="Pick a date and time that works for you. I'll send a Google Meet link to your email."
         className="p-2 md:p-8"
-        drawerClassName="h-auto"
+        drawerClassName="h-[95vh]"
       >
         <ScheduleMeetingForm onSuccess={() => setOpen(false)} />
       </ResponsiveOverlay>

@@ -1,4 +1,4 @@
-import { Github, Linkedin, Twitter } from "lucide-react"
+import { Github, Instagram, Linkedin, Mail, MessageCircle, Twitter } from "lucide-react";
 
 export const commonTimezones = [
   { label: "Asia/Kolkata (IST)", value: "Asia/Kolkata" },
@@ -28,20 +28,11 @@ export const footerLinks = [
     ],
   },
   {
-    title: "Specifics",
-    links: [
-      { label: "Guest Book", href: "/guestbook" },
-      { label: "Uses", href: "/uses" },
-      { label: "Integration", href: "/integration" },
-    ],
-  },
-  {
     title: "More",
     links: [
       { label: "Contact", href: "/contact" },
       { label: "Book a Call", href: "/book-a-call" },
       { label: "Links", href: "/links" },
-      { label: "RSS", href: "/rss" },
     ],
   },
 ]
@@ -51,3 +42,37 @@ export const socialLinks = [
   { icon: Github, href: "https://github.com", label: "GitHub" },
   { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
 ]
+
+
+export const SOCIAL_LINKS = [
+  {
+    name: "WhatsApp",
+    href: "https://wa.me/yournumber",
+    icon: MessageCircle,
+    color: "hover:text-[#25D366]",
+  },
+  {
+    name: "Email",
+    href: "mailto:manifreelancer25@gmail.com",
+    icon: Mail,
+    color: "hover:text-[#EA4335]",
+  },
+  {
+    name: "LinkedIn",
+    href: "https://linkedin.com/in/yourprofile",
+    icon: Linkedin,
+    color: "hover:text-[#0A66C2]",
+  },
+  {
+    name: "Instagram",
+    href: "https://instagram.com/yourprofile",
+    icon: Instagram,
+    color: "hover:text-[#E4405F]",
+  },
+  {
+    name: "GitHub",
+    href: "https://github.com/yourprofile",
+    icon: Github,
+    color: "hover:text-[#333]",
+  },
+];

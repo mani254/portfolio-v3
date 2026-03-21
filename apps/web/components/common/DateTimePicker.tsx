@@ -77,12 +77,12 @@ export function DateTimePicker({ date, onChange, timezone = Intl.DateTimeFormat(
               Timezone: {timezone}
             </span>
           </div>
-          <div className="flex bg-muted rounded-lg p-0.5">
+          <div className="flex bg-muted rounded-lg p-0.5 relative z-10">
             <button
               type="button"
               onClick={() => setIs24h(false)}
               className={cn(
-                "px-2 py-1 text-[10px] rounded-md transition-all",
+                "cursor-pointer px-2 py-1 text-[10px] rounded-md transition-all relative z-20",
                 !is24h ? "bg-background shadow-sm" : "hover:bg-background/20"
               )}
             >
@@ -92,7 +92,7 @@ export function DateTimePicker({ date, onChange, timezone = Intl.DateTimeFormat(
               type="button"
               onClick={() => setIs24h(true)}
               className={cn(
-                "px-2 py-1 text-[10px] rounded-md transition-all",
+                "cursor-pointer px-2 py-1 text-[10px] rounded-md transition-all relative z-20",
                 is24h ? "bg-background shadow-sm" : "hover:bg-background/20"
               )}
             >

@@ -24,7 +24,7 @@ function CtaPro() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top 80%",
-          end: "top 30%",
+          end: "top 20%",
           scrub: 1,
         },
       });
@@ -44,7 +44,7 @@ function CtaPro() {
             scrollTrigger: {
               trigger: sectionRef.current,
               start: "top 90%",
-              end: "bottom 60%",
+              end: "bottom 70%",
               scrub: 1,
             },
           });

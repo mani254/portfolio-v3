@@ -18,7 +18,7 @@ export default function SectionHeading({
 }: SectionHeadingProps) {
   return (
     <div className={cn("space-y-2 mb-8", center && "text-center", className)}>
-      <h2 className="text-2xl md:text-3xl lg:text-5xl font-black font-lexend tracking-tighter text-foreground leading-[0.9]">
+      <h2 className="font-semibold text-2xl md:text-3xl lg:text-5xl text-foreground leading-[0.9]">
         {heading}
         {spanContent && (
           <span

@@ -70,22 +70,22 @@ export default function ScrollingProjects({ projects }: Props) {
           onEnter: () =>
             gsap.to(bgRef.current, {
               backgroundColor: getProjectColor(index, currentTheme).backgroundColor,
-              duration: 0.5
+              duration: 0.3
             }),
           onEnterBack: () =>
             gsap.to(bgRef.current, {
               backgroundColor: getProjectColor(index, currentTheme).backgroundColor,
-              duration: 0.5
+              duration: 0.3
             }),
           onLeave: () =>
             gsap.to(bgRef.current, {
               backgroundColor: "transparent",
-              duration: 0.5
+              duration: 0.3
             }),
           onLeaveBack: () =>
             gsap.to(bgRef.current, {
               backgroundColor: "transparent",
-              duration: 0.5
+              duration: 0.3
             }),
           scrub: 1
         })

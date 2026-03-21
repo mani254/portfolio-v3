@@ -39,11 +39,8 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>
 
-
-
-
 interface ScheduleMeetingFormProps {
-  onSuccess: () => void
+  onSuccess?: () => void
 }
 
 export function ScheduleMeetingForm({ onSuccess }: ScheduleMeetingFormProps) {
@@ -56,6 +53,7 @@ export function ScheduleMeetingForm({ onSuccess }: ScheduleMeetingFormProps) {
       email: "",
       duration: "30",
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      dateTime: new Date(),
     },
   })
 
@@ -78,7 +76,7 @@ export function ScheduleMeetingForm({ onSuccess }: ScheduleMeetingFormProps) {
       }
 
       toast.success("Meeting scheduled successfully! I'll see you then.")
-      onSuccess()
+      onSuccess?.()
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : "Something went wrong. Please try again."
       toast.error(errorMessage)

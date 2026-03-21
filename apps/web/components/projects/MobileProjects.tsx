@@ -81,7 +81,7 @@ export default function MobileProjects({ projects }: Props) {
 
                 <Button
                   onClick={() => router.push(`/projects/${project.slug}`)}
-                  className="flex w-full items-center justify-center gap-2 rounded-xl  text-sm font-semibold transition-all duration-300 active:scale-95 py-4"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl  text-sm font-semibold transition-all duration-300 active:scale-95 py-6"
                 >
                   View Project Details
                   <ArrowUpRight className="h-4 w-4" />

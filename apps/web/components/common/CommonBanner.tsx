@@ -12,7 +12,7 @@ const CommonBanner = ({ title }: { title: string }) => {
     <section className="relative w-full h-[25vh] min-h-[180px] max-h-[300px] overflow-hidden">
 
       {/* Background Image */}
-      <div className="absolute inset-0 -z-10">
+      <div className="absolute inset-0 z-0">
         <Image
           src={BannerImg}
           alt="Project Banner"
@@ -23,7 +23,7 @@ const CommonBanner = ({ title }: { title: string }) => {
       </div>
 
       {/* Gradient Fade */}
-      <div className="absolute inset-0 -z-10 bg-linear-to-t from-background via-background/70 via-60% to-background/40" />
+      <div className="absolute inset-0 z-1 bg-linear-to-t from-background via-background/70 via-60% to-background/40" />
 
       <div className="container">
 
@@ -31,15 +31,15 @@ const CommonBanner = ({ title }: { title: string }) => {
 
         <button
           onClick={() => router.back()}
-          className="relative z-10 flex items-center gap-2 text-foreground hover:text-primary transition-colors cursor-pointer"
+          className="relative z-20 flex items-center gap-2 text-foreground hover:text-primary transition-colors cursor-pointer"
         >
           <ArrowLeft className="h-5 w-5" />
           <span className="font-medium">Back</span>
         </button>
 
         {/* Centered Title */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <h1 className="text-3xl md:text-5xl font-bold text-foreground/50">
+        <div className="absolute inset-0 z-10 flex items-center justify-center">
+          <h1 className="text-3xl md:text-5xl font-bold text-foreground/60">
             {title}
           </h1>
         </div>
