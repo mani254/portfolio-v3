@@ -4,7 +4,7 @@
 
 @theme {
   --font-inter: var(--font-inter);
-  --font-lexend: var(--font-lexend);
+  --font-quicksand: var(--font-quicksand);
 }
 
 :root {
@@ -167,7 +167,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-lexend), system-ui, sans-serif;
+  font-family: var(--font-quicksand), system-ui, sans-serif;
 }
 
 p {
@@ -314,4 +314,5 @@ section {
   .phoneInputInput:focus {
     outline: none !important;
   }
+
 }

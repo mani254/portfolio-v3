@@ -1,7 +1,7 @@
 "use client"
 
 import { FormatedProject } from "@/app/projects/page"
-import { cn, getProjectColor } from "@/lib/utils"
+import { getProjectColor } from "@/lib/utils"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useTheme } from "next-themes"
@@ -30,7 +30,7 @@ export default function ScrollingProjects({ projects }: Props) {
   const contentRefs = useRef<HTMLDivElement[]>([])
   const cursorRef = useRef<HTMLDivElement>(null)
 
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  // const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
 
   const xTo = useRef<((value: number) => void) | null>(null)
   const yTo = useRef<((value: number) => void) | null>(null)
@@ -43,12 +43,12 @@ export default function ScrollingProjects({ projects }: Props) {
     }
   }, [mounted])
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (xTo.current && yTo.current) {
-      xTo.current(e.clientX)
-      yTo.current(e.clientY)
-    }
-  }
+  // const handleMouseMove = (e: React.MouseEvent) => {
+  //   if (xTo.current && yTo.current) {
+  //     xTo.current(e.clientX)
+  //     yTo.current(e.clientY)
+  //   }
+  // }
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -62,30 +62,33 @@ export default function ScrollingProjects({ projects }: Props) {
     const ctx = gsap.context(() => {
       sectionRefs.current.forEach((el, index) => {
         if (!el) return
+        const isLast = index === sectionRefs.current.length - 1
+
         ScrollTrigger.create({
           trigger: el,
-          start: "top 50%",
-          end: "bottom 50%",
+          start: `top ${index === 0 ? "15%" : "50%"}`,
+          end: `bottom ${isLast ? "90%" : "50%"}`,
+          // markers: true,
           toggleActions: "play none none reverse",
           onEnter: () =>
             gsap.to(bgRef.current, {
               backgroundColor: getProjectColor(index, currentTheme).backgroundColor,
-              duration: 0.3
+              duration: 0.2
             }),
           onEnterBack: () =>
             gsap.to(bgRef.current, {
               backgroundColor: getProjectColor(index, currentTheme).backgroundColor,
-              duration: 0.3
+              duration: 0.2
             }),
           onLeave: () =>
             gsap.to(bgRef.current, {
               backgroundColor: "transparent",
-              duration: 0.3
+              duration: 0.2
             }),
           onLeaveBack: () =>
             gsap.to(bgRef.current, {
               backgroundColor: "transparent",
-              duration: 0.3
+              duration: 0.2
             }),
           scrub: 1
         })
@@ -175,9 +178,9 @@ export default function ScrollingProjects({ projects }: Props) {
                   key={project._id}
                   ref={(el) => { if (el) imageBoxes.current[index] = el }}
                   className="w-full h-full absolute p-8 flex items-center justify-center cursor-none"
-                  onMouseEnter={() => setHoveredIndex(index)}
-                  onMouseLeave={() => setHoveredIndex(null)}
-                  onMouseMove={handleMouseMove}
+                  // onMouseEnter={() => setHoveredIndex(index)}
+                  // onMouseLeave={() => setHoveredIndex(null)}
+                  // onMouseMove={handleMouseMove}
                   onClick={() => router.push(`/projects/${project.slug}`)}
                   style={{
                     zIndex: projects.length - index,
@@ -200,7 +203,7 @@ export default function ScrollingProjects({ projects }: Props) {
         </div>
 
         {/* CUSTOM CURSOR */}
-        <div
+        {/* <div
           ref={cursorRef}
           className={cn(
             "fixed pointer-events-none z-100 flex items-center justify-center rounded-full overflow-hidden transition-all duration-300 ease-out",
@@ -229,7 +232,7 @@ export default function ScrollingProjects({ projects }: Props) {
               View <br /> Details
             </span>
           </div>
-        </div>
+        </div> */}
 
         {/* RIGHT CONTENT */}
         <div className="w-[45%]">

@@ -1,15 +1,14 @@
 "use client";
 
 import BannerImg from "@/public/images/projects-banner.jpg";
-import { ArrowLeft } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 
 
 const CommonBanner = ({ title }: { title: string }) => {
-  const router = useRouter();
+  // const router = useRouter();
   return (
-    <section className="relative w-full h-[25vh] min-h-[180px] max-h-[300px] overflow-hidden">
+    <section className="relative w-full h-[35vh] min-h-[180px] max-h-[300px] overflow-hidden">
 
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
@@ -29,13 +28,13 @@ const CommonBanner = ({ title }: { title: string }) => {
 
         {/* Back Button - Top Left */}
 
-        <button
+        {/* <button
           onClick={() => router.back()}
           className="relative z-20 flex items-center gap-2 text-foreground hover:text-primary transition-colors cursor-pointer"
         >
           <ArrowLeft className="h-5 w-5" />
           <span className="font-medium">Back</span>
-        </button>
+        </button> */}
 
         {/* Centered Title */}
         <div className="absolute inset-0 z-10 flex items-center justify-center">

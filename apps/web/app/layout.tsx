@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Inter, Lexend } from "next/font/google";
+import { Inter, Quicksand } from "next/font/google";
 import "./globals.css";
 
 
-const lexend = Lexend({
-  variable: "--font-lexend",
+const quicksand = Quicksand({
+  variable: "--font-quicksand",
   subsets: ["latin"],
 });
 
@@ -56,9 +56,10 @@ export const metadata: Metadata = {
   },
 };
 
-import { ThemeProvider } from "@/components/theme-provider";
+import Cursor from "@/components/common/Cursor";
+import NavBar from "@/components/common/NavBar";
 import Footer from "@/components/layout/Footer";
-import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export default function RootLayout({
   children,
@@ -66,16 +67,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${lexend.variable} ${inter.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${quicksand.variable} ${inter.variable}`} suppressHydrationWarning>
       <body
         className="antialiased"
       >
+
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
           enableSystem={false}
           disableTransitionOnChange
         >
+          <NavBar />
+          <Cursor />
           {children}
           <Footer />
           {/* <Toaster richColors position="top-right" /> */}

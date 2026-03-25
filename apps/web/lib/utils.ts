@@ -79,6 +79,31 @@ export const PROJECT_SECTION_COLORS = [
   }
 ]
 
+export function getCursorColor() {
+  let theme = "light"
+  if (typeof window !== "undefined") {
+    theme = localStorage.getItem("theme") || "light"
+  }
+  if (theme == "light") {
+    return "#35353B88"
+  }
+  else {
+    return "#D5D5D988"
+  }
+}
+export function getCursorBackgroundColor() {
+  let theme = "light"
+  if (typeof window !== "undefined") {
+    theme = localStorage.getItem("theme") || "light"
+  }
+  if (theme == "light") {
+    return "rgba(85,85,85,0.1)"
+  }
+  else {
+    return "rgba(213,213,217,0.1)"
+  }
+}
+
 export const getProjectColor = (index: number, theme: string = "light") => {
   const color = PROJECT_SECTION_COLORS[index % PROJECT_SECTION_COLORS.length];
   return theme === "dark" ? color.dark : color.light;
