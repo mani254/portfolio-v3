@@ -7,40 +7,49 @@ import { ChevronDown } from 'lucide-react';
 import Image from "next/image";
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Hamburger } from './Hamburger';
+import { MobileMenuContent } from './MobileMenuContent';
 import { ThemeButton } from './ThemeButton';
+import { NAV_ITEMS } from '@/lib/consts';
 
-const navItems = [
-  { label: "Home", to: "/" },
-  { label: "About", to: "/about" },
-  { label: "Projects", to: "/projects" },
-  { label: "Blogs", to: "/blogs" },
-  {
-    label: "More", to: undefined, dropDownComponent: () => {
-      return (
-        <div className="bg-linear-to-b from-foreground/15 to-foreground/10 backdrop-blur-md px-3 py-1.5 rounded-md border border-white/10 dark:border-white/5">
-          <div className="flex flex-col gap-2">
-            <div className="px-2 py-1.5 rounded-lg hover:bg-foreground/5 transition-colors cursor-pointer">
-              <p className="text-xs font-semibold">Insights</p>
-              <p className="text-[10px] text-foreground/50">Tech and lifestyle</p>
-            </div>
-            <div className="px-2 py-1.5 rounded-lg hover:bg-foreground/5 transition-colors cursor-pointer">
-              <p className="text-xs font-semibold">Snippets</p>
-              <p className="text-[10px] text-foreground/50">Reusable code blocks</p>
+interface NavItem {
+  label: string;
+  to?: string;
+  active?: boolean;
+  dropDownComponent?: () => React.ReactNode;
+}
+
+const navItems: NavItem[] = (NAV_ITEMS as NavItem[]).map((item) => {
+  if (item.label === "More") {
+    return {
+      ...item,
+      dropDownComponent: () => {
+        return (
+          <div className="bg-linear-to-b from-foreground/15 to-foreground/10 backdrop-blur-md px-3 py-1.5 rounded-md border border-white/10 dark:border-white/5">
+            <div className="flex flex-col gap-2">
+              <div className="px-2 py-1.5 rounded-lg hover:bg-foreground/5 transition-colors cursor-pointer">
+                <p className="text-xs font-semibold">Insights</p>
+                <p className="text-[10px] text-foreground/50">Tech and lifestyle</p>
+              </div>
+              <div className="px-2 py-1.5 rounded-lg hover:bg-foreground/5 transition-colors cursor-pointer">
+                <p className="text-xs font-semibold">Snippets</p>
+                <p className="text-[10px] text-foreground/50">Reusable code blocks</p>
+              </div>
             </div>
           </div>
-        </div>
-      )
-    }
-  },
-  { label: "Let's Talk", to: '/contact', active: true }
-];
+        )
+      }
+    };
+  }
+  return item;
+});
 
 const NavBar = () => {
   const pathname = usePathname();
   const [menuActive, setMenuActive] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
 
   const toggleMenu = () => setMenuActive(!menuActive);
 
@@ -128,16 +137,22 @@ const NavBar = () => {
           </div>
         </div>
 
-        <div className='bg-linear-to-b from-foreground/10 to-foreground/5 backdrop-blur-md px-5 py-1.5 rounded-full border border-white/10 dark:border-white/5'>
-          <div className="flex items-center gap-5 glass-effect rounded-full relative">
-            <div className='hover-link'>
-              <ThemeButton />
+        <div>
+          <div className='bg-linear-to-b from-foreground/10 to-foreground/5 backdrop-blur-md px-5 py-1.5 rounded-full border border-white/10 dark:border-white/5 relative z-20' >
+            <div className="flex items-center gap-5 glass-effect rounded-full relative">
+              <div className='hover-link'>
+                <ThemeButton />
+              </div>
+
+              <div className='hover-link'>
+                <Hamburger isActive={menuActive} toggle={toggleMenu} />
+              </div>
             </div>
 
-            <div className='hover-link'>
-              <Hamburger isActive={menuActive} toggle={toggleMenu} />
-            </div>
           </div>
+
+          <MobileMenuContent menuActive={menuActive} />
+
         </div>
       </div>
 

@@ -315,4 +315,9 @@ section {
     outline: none !important;
   }
 
+  .mobile-menu {
+    clip-path: circle(5px at 100% 0);
+    will-change: clip-path;
+  }
+
 }

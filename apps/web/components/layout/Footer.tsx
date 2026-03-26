@@ -1,5 +1,5 @@
 
-import { footerLinks, socialLinks } from "@/lib/consts";
+import { CONTACT_LINKS, footerLinks } from "@/lib/consts";
 import Link from "next/link";
 
 export default function Footer() {
@@ -55,16 +55,16 @@ export default function Footer() {
           </div>
 
           <div className="flex items-center gap-5">
-            {socialLinks.map((social) => {
+            {CONTACT_LINKS.map((social) => {
               const Icon = social.icon;
               return (
                 <Link
-                  key={social.label}
+                  key={social.name}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-muted-foreground/60 hover:text-primary transition-all transform hover:scale-110"
-                  aria-label={social.label}
+                  className="text-muted-foreground/60 hover:text-primary transition-all transform hover:scale-110 link-hover"
+                  aria-label={social.name}
                 >
                   <Icon className="w-5 h-5" />
                 </Link>

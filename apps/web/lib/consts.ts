@@ -37,42 +37,59 @@ export const footerLinks = [
   },
 ]
 
-export const socialLinks = [
-  { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
-  { icon: Github, href: "https://github.com", label: "GitHub" },
-  { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
-]
-
-
-export const SOCIAL_LINKS = [
+export const NAV_ITEMS = [
+  { label: "Home", to: "/" },
+  { label: "About", to: "/about" },
+  { label: "Projects", to: "/projects" },
+  { label: "Blogs", to: "/blogs" },
   {
-    name: "WhatsApp",
-    href: "https://wa.me/yournumber",
+    label: "More", to: undefined,
+  },
+  { label: "Let's Talk", to: '/contact', active: true }
+];
+
+export const MOBILE_NAV_LINKS = [
+  { label: "Home", to: "/" },
+  { label: "About", to: "/about" },
+  { label: "Services", to: "/services" },
+  { label: "Projects", to: "/projects" },
+  { label: "Contact", to: "/contact" },
+];
+
+export const CONTACT_LINKS = [
+  {
+    name: "Github",
+    href: "https://github.com/mani254",
+    icon: Github,
+  },
+  {
+    name: "Linkedin",
+    href: "https://www.linkedin.com/in/sai0421/",
+    icon: Linkedin,
+  },
+  {
+    name: "Instagram",
+    href: "https://www.instagram.com/dev_mani25/",
+    icon: Instagram,
+  },
+  {
+    name: "Youtube",
+    href: "https://www.youtube.com/channel/UCCdkYdNdJYuyQx_ky5GTvYg",
+    icon: Github, // Using Github as placeholder if Youtube icon not in lucide-react (or I should check)
+  },
+  {
+    name: "Whatsapp",
+    href: "https://wa.me/+918688014415",
     icon: MessageCircle,
-    color: "hover:text-[#25D366]",
   },
   {
     name: "Email",
     href: "mailto:manifreelancer25@gmail.com",
     icon: Mail,
-    color: "hover:text-[#EA4335]",
   },
   {
-    name: "LinkedIn",
-    href: "https://linkedin.com/in/yourprofile",
-    icon: Linkedin,
-    color: "hover:text-[#0A66C2]",
-  },
-  {
-    name: "Instagram",
-    href: "https://instagram.com/yourprofile",
-    icon: Instagram,
-    color: "hover:text-[#E4405F]",
-  },
-  {
-    name: "GitHub",
-    href: "https://github.com/yourprofile",
-    icon: Github,
-    color: "hover:text-[#333]",
+    name: "Twitter",
+    href: "https://twitter.com",
+    icon: Twitter,
   },
 ];
