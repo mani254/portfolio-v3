@@ -48,7 +48,7 @@ export function MobileMenuContent({ menuActive }: { menuActive: boolean }) {
             Mail
           </div>
           <div ref={(el) => { if (el) fadeInUp1.current[1] = el }}>
-            <p className="text-sm font-medium pb-5 cursor-pointer inline-block text-foreground/70 transition-colors hover:text-foreground hover:scale-[1.1]">
+            <p className="hover-link text-sm font-medium pb-5 cursor-pointer inline-block text-foreground/70 transition-colors hover:text-foreground hover:scale-[1.07]">
               <a href="mailto:manifreelancer25@gmail.com">Send a Mail</a>
             </p>
           </div>
@@ -59,7 +59,7 @@ export function MobileMenuContent({ menuActive }: { menuActive: boolean }) {
           <div className="flex flex-col gap-3 mt-1 hover-link" >
             {CONTACT_LINKS.map((link, index) => (
               <div key={link.name} ref={(el) => { if (el) fadeInUp2.current[index + 1] = el }}>
-                <a href={link.href} target="_blank" className="hover:scale-[1.1] text-sm font-medium text-foreground/70 transition-all hover:text-foreground inline-block w-fit">
+                <a href={link.href} target="_blank" className="hover:scale-[1.07] text-sm font-medium text-foreground/70 transition-all hover:text-foreground inline-block w-fit">
                   {link.name}
                 </a>
               </div>
@@ -71,7 +71,7 @@ export function MobileMenuContent({ menuActive }: { menuActive: boolean }) {
           {MOBILE_NAV_LINKS.map((link, index) => (
             <li key={link.label} ref={(el) => { if (el) fadeInUp3.current[index] = el }}>
               <Link href={link.to} className="group block">
-                <h2 className="hover-link text-xl md:text-2xl text-foreground transition-all hover:scale-[1.1]">
+                <h2 className="hover-link text-xl md:text-2xl text-foreground transition-all hover:scale-[1.07]">
                   {link.label}
                 </h2>
               </Link>

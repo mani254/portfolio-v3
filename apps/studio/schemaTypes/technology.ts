@@ -35,6 +35,20 @@ export default defineType({
       initialValue: false,
       description: "If true, this logo will be inverted in dark mode (useful for solid black logos).",
     }),
+    defineField({
+      name: "category",
+      title: "Category",
+      type: "string",
+      options: {
+        list: [
+          { title: "Languages", value: "Languages" },
+          { title: "Frameworks & Libraries", value: "Frameworks & Libraries" },
+          { title: "Databases & Tools", value: "Databases & Tools" },
+          { title: "Other", value: "Other" },
+        ],
+      },
+      description: "The category of this technology.",
+    }),
   ],
   preview: {
     select: {

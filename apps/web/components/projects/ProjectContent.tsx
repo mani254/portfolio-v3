@@ -73,7 +73,7 @@ export default function ProjectContent({ project, index, isMobile }: Props) {
               >
                 {tech.image && (
                   <div className="w-5 h-5 relative shrink-0 rounded-full overflow-hidden brightness-110">
-                    <Image src={tech.image} alt={tech.title} fill className={cn("object-contain", tech.isBlack && 'dark:invert')} />
+                    <Image unoptimized src={tech.image} alt={tech.title} fill className={cn("object-contain", tech.isBlack && 'dark:invert')} />
                   </div>
                 )}
                 <span className="text-[12px] font-medium tracking-wide text-foreground/90">{tech.title}</span>

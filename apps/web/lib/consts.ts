@@ -93,3 +93,5 @@ export const CONTACT_LINKS = [
     icon: Twitter,
   },
 ];
+
+export const TECH_CATEGORIES = ["Languages", "Frameworks & Libraries", "Databases & Tools", "Other"];

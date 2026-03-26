@@ -10,6 +10,7 @@ export interface SanityTechnology {
   } | null;
   description?: string;
   isBlack?: boolean;
+  category?: string;
 }
 
 export interface Technology {
@@ -18,6 +19,7 @@ export interface Technology {
   image?: string;
   description?: string;
   isBlack?: boolean;
+  category?: string;
 }
 
 export interface SanityProject {

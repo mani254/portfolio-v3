@@ -45,6 +45,15 @@ export const PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.current == $s
   techStackDetails
 }`;
 
+export const ALL_TECHNOLOGIES_QUERY = `*[_type == "technology"] | order(title asc) {
+  _id,
+  title,
+  image,
+  description,
+  isBlack,
+  category
+}`;
+
 function transformTechnology(sanityTech: SanityTechnology): Technology {
   return {
     id: sanityTech._id,
@@ -52,6 +61,7 @@ function transformTechnology(sanityTech: SanityTechnology): Technology {
     image: sanityTech.image ? urlFor(sanityTech.image).width(200).url() : undefined,
     description: sanityTech.description,
     isBlack: sanityTech.isBlack,
+    category: sanityTech.category,
   };
 }
 
@@ -91,6 +101,19 @@ export async function getAllProjects(): Promise<Project[]> {
     return sanityProjects.map(p => transformProject(p)).filter((p): p is Project => p !== null);
   } catch (error) {
     console.error("Error fetching all projects from Sanity:", error);
+    return [];
+  }
+}
+
+export async function getAllTechnologies(): Promise<Technology[]> {
+  try {
+    const sanityTechnologies = await client.fetch<SanityTechnology[]>(
+      ALL_TECHNOLOGIES_QUERY,
+      {}
+    );
+    return sanityTechnologies.map(transformTechnology);
+  } catch (error) {
+    console.error("Error fetching all technologies from Sanity:", error);
     return [];
   }
 }
