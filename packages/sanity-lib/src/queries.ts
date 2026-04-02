@@ -131,3 +131,176 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
   }
 }
 
+// ============== NEW QUERIES ==============
+
+export const ALL_EXPERIENCES_QUERY = `*[_type == "experience"] | order(startDate desc) {
+  _id,
+  companyName,
+  logo,
+  startDate,
+  endDate,
+  designation,
+  location,
+  employmentType,
+  description
+}`;
+
+export const ALL_EDUCATION_QUERY = `*[_type == "education"] | order(startDate desc) {
+  _id,
+  university,
+  course,
+  stream,
+  percentage,
+  startDate,
+  endDate,
+  iconImage,
+  description
+}`;
+
+export const RESUME_QUERY = `*[_type == "resume"][0] {
+  _id,
+  title,
+  "resumePdf": {
+    "asset": {
+      "url": resumePdf.asset->url
+    }
+  }
+}`;
+
+export const ALL_BLOG_CATEGORIES_QUERY = `*[_type == "blogCategory"] | order(title asc) {
+  _id,
+  title
+}`;
+
+// PAGINATED AND FILTERED BLOGS
+export const PAGINATED_BLOGS_QUERY = `*[_type == "blog" && ($category == "" || $category in categories[]->title)] | order(_createdAt desc) [$start...$end] {
+  _id,
+  title,
+  "slug": slug.current,
+  readTime,
+  author,
+  mainImage,
+  overview,
+  categories[]->{ _id, title }
+}`;
+
+export const TOTAL_BLOGS_QUERY = `count(*[_type == "blog" && ($category == "" || $category in categories[]->title)])`;
+
+export const BLOG_BY_SLUG_QUERY = `*[_type == "blog" && slug.current == $slug][0] {
+  _id,
+  title,
+  "slug": slug.current,
+  readTime,
+  author,
+  mainImage,
+  categories[]->{ _id, title },
+  overview,
+  keywords,
+  sections
+}`;
+
+// ============== FETCHING METHODS ==============
+
+import type { 
+  Experience, SanityExperience, 
+  Education, SanityEducation, 
+  BlogCategory, SanityBlogCategory, 
+  Blog, SanityBlog, 
+  Resume, SanityResume 
+} from "./types";
+
+export async function getAllExperiences(): Promise<Experience[]> {
+  try {
+    const data = await client.fetch<SanityExperience[]>(ALL_EXPERIENCES_QUERY);
+    return data.map(exp => ({
+      ...exp,
+      id: exp._id,
+      logo: exp.logo ? urlFor(exp.logo).width(200).url() : undefined
+    }));
+  } catch (error) {
+    console.error("Error fetching experiences:", error);
+    return [];
+  }
+}
+
+export async function getAllEducation(): Promise<Education[]> {
+  try {
+    const data = await client.fetch<SanityEducation[]>(ALL_EDUCATION_QUERY);
+    return data.map(edu => ({
+      ...edu,
+      id: edu._id,
+      iconImage: edu.iconImage ? urlFor(edu.iconImage).width(200).url() : undefined
+    }));
+  } catch (error) {
+    console.error("Error fetching education:", error);
+    return [];
+  }
+}
+
+export async function getResume(): Promise<Resume | null> {
+  try {
+    const data = await client.fetch<SanityResume | null>(RESUME_QUERY);
+    if (!data) return null;
+    return {
+      id: data._id,
+      title: data.title,
+      resumeUrl: data.resumePdf?.asset?.url
+    };
+  } catch (error) {
+    console.error("Error fetching resume:", error);
+    return null;
+  }
+}
+
+export async function getBlogCategories(): Promise<BlogCategory[]> {
+  try {
+    const data = await client.fetch<SanityBlogCategory[]>(ALL_BLOG_CATEGORIES_QUERY);
+    return data.map(cat => ({ ...cat, id: cat._id }));
+  } catch (error) {
+    console.error("Error fetching blog categories:", error);
+    return [];
+  }
+}
+
+export async function getPaginatedBlogs(page: number, limit: number, category: string = ""): Promise<{ blogs: Blog[]; total: number }> {
+  try {
+    const start = (page - 1) * limit;
+    const end = start + limit;
+    
+    const [blogsData, total] = await Promise.all([
+      client.fetch<SanityBlog[]>(PAGINATED_BLOGS_QUERY, { category, start, end }),
+      client.fetch<number>(TOTAL_BLOGS_QUERY, { category })
+    ]);
+
+    const blogs = blogsData.map(blog => ({
+      ...blog,
+      id: blog._id,
+      categories: blog.categories?.map((c: SanityBlogCategory) => ({ id: c._id, title: c.title })),
+      mainImage: blog.mainImage ? getImageUrl(blog.mainImage, 800) : undefined, // Use getImageUrl for bigger images
+      mainImageAlt: blog.mainImage?.alt || blog.title
+    }));
+
+    return { blogs, total };
+  } catch (error) {
+    console.error("Error fetching paginated blogs:", error);
+    return { blogs: [], total: 0 };
+  }
+}
+
+export async function getBlogBySlug(slug: string): Promise<Blog | null> {
+  try {
+    const data = await client.fetch<SanityBlog | null>(BLOG_BY_SLUG_QUERY, { slug });
+    if (!data) return null;
+
+    return {
+      ...data,
+      id: data._id,
+      categories: data.categories?.map((c: SanityBlogCategory) => ({ id: c._id, title: c.title })),
+      mainImage: data.mainImage ? getImageUrl(data.mainImage, 1200) : undefined,
+      mainImageAlt: data.mainImage?.alt || data.title
+    };
+  } catch (error) {
+    console.error("Error fetching blog by slug:", error);
+    return null;
+  }
+}

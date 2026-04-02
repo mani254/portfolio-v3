@@ -83,3 +83,113 @@ export interface Project {
   techStackDetails?: { title: string; description: string }[];
 }
 
+export interface SanityExperience {
+  _id: string;
+  companyName: string;
+  logo?: {
+    asset: { _ref: string; _type: "reference" };
+  } | null;
+  startDate: string;
+  endDate?: string;
+  designation: string;
+  location: string;
+  employmentType?: string;
+  description?: any[];
+}
+
+export interface Experience {
+  id: string;
+  companyName: string;
+  logo?: string;
+  startDate: string;
+  endDate?: string;
+  designation: string;
+  location: string;
+  employmentType?: string;
+  description?: any[];
+}
+
+export interface SanityEducation {
+  _id: string;
+  university: string;
+  course: string;
+  stream?: string;
+  percentage?: string;
+  startDate: string;
+  endDate?: string;
+  iconImage?: {
+    asset: { _ref: string; _type: "reference" };
+  } | null;
+  description?: any[];
+}
+
+export interface Education {
+  id: string;
+  university: string;
+  course: string;
+  stream?: string;
+  percentage?: string;
+  startDate: string;
+  endDate?: string;
+  iconImage?: string;
+  description?: any[];
+}
+
+export interface SanityBlogCategory {
+  _id: string;
+  title: string;
+}
+
+export interface BlogCategory {
+  id: string;
+  title: string;
+}
+
+export interface SanityBlogSection {
+  title?: string;
+  description?: any[];
+}
+
+export interface SanityBlog {
+  _id: string;
+  title: string;
+  slug: string;
+  readTime: string;
+  author: string;
+  mainImage?: {
+    asset: { _ref: string; _type: "reference" };
+    alt?: string;
+  } | null;
+  categories?: SanityBlogCategory[];
+  overview?: string;
+  keywords?: string[];
+  sections?: SanityBlogSection[];
+}
+
+export interface Blog {
+  id: string;
+  title: string;
+  slug: string;
+  readTime: string;
+  author: string;
+  mainImage?: string;
+  mainImageAlt?: string;
+  categories?: BlogCategory[];
+  overview?: string;
+  keywords?: string[];
+  sections?: SanityBlogSection[];
+}
+
+export interface SanityResume {
+  _id: string;
+  title: string;
+  resumePdf?: {
+    asset: { _ref: string; _type: "reference"; url?: string };
+  } | null;
+}
+
+export interface Resume {
+  id: string;
+  title: string;
+  resumeUrl?: string;
+}
