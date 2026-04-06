@@ -1,0 +1,11 @@
+{
+  "name": "typescript-config",
+  "version": "1.0.0",
+  "description": "Shared TypeScript configurations for the portfolio-v3 monorepo",
+  "private": true,
+  "license": "ISC",
+  "packageManager": "pnpm@10.13.1",
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

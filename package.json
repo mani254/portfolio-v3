@@ -1,12 +1,13 @@
 {
   "name": "portfolio-v3",
   "version": "1.0.0",
-  "description": "",
+  "description": "Root configuration for the Portfolio v3 monorepo",
   "main": "index.js",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "lint": "turbo run lint"
+    "lint": "turbo run lint",
+    "clean": "rimraf --glob \"**/node_modules\" \"**/.turbo\" \"**/.next\" \"**/dist\" \"**/*.tsbuildinfo\""
   },
   "keywords": [],
   "author": "",

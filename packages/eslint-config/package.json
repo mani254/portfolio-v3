@@ -1,0 +1,24 @@
+{
+  "name": "eslint-config",
+  "version": "1.0.0",
+  "description": "Shared ESLint flat configurations for the portfolio-v3 monorepo",
+  "private": true,
+  "license": "ISC",
+  "packageManager": "pnpm@10.13.1",
+  "type": "module",
+  "exports": {
+    "./base": "./src/base.js",
+    "./next": "./src/next.js",
+    "./sanity": "./src/sanity.js"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "dependencies": {
+    "@eslint/js": "^9.28.0",
+    "typescript-eslint": "^8.33.0"
+  },
+  "peerDependencies": {
+    "eslint": "^9.0.0"
+  }
+}

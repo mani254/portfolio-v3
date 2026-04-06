@@ -1,5 +1,6 @@
 {
-  "name": "portfolio",
+  "name": "studio",
+  "description": "Sanity Studio CMS application for the portfolio content management",
   "private": true,
   "version": "1.0.0",
   "main": "package.json",
@@ -15,18 +16,20 @@
     "sanity"
   ],
   "dependencies": {
-    "@sanity/vision": "^5.13.0",
+    "@sanity/vision": "^5.19.0",
     "react": "^19.1",
     "react-dom": "^19.1",
-    "sanity": "^5.13.0",
+    "sanity": "^5.19.0",
     "styled-components": "^6.1.18"
   },
   "devDependencies": {
     "@sanity/eslint-config-studio": "^6.0.0",
     "@types/react": "^19.1",
     "eslint": "^9.28",
+    "eslint-config": "workspace:*",
     "prettier": "^3.5",
-    "typescript": "^5.8"
+    "typescript": "^5.8",
+    "typescript-config": "workspace:*"
   },
   "prettier": {
     "semi": false,

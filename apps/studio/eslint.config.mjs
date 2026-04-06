@@ -1,3 +1,3 @@
-import studio from '@sanity/eslint-config-studio'
+import sanity from "eslint-config/sanity";
 
-export default [...studio]
+export default sanity;

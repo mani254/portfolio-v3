@@ -1,9 +1,10 @@
-# Sanity Clean Content Studio
+# Sanity Studio
 
-Congratulations, you have now installed the Sanity Content Studio, an open-source real-time content editing environment connected to the Sanity backend.
+The content management layer of the portfolio, leveraging Sanity.io.
 
-Now you can do the following things:
+## Folder Structure
+- Configuration files are placed at the root level of the studio directory.
+- Model definitions and UI schema structures dictate how the editor dashboard looks and behaves.
 
-- [Read “getting started” in the docs](https://www.sanity.io/docs/introduction/getting-started?utm_source=readme)
-- [Join the Sanity community](https://www.sanity.io/community/join?utm_source=readme)
-- [Extend and build plugins](https://www.sanity.io/docs/content-studio/extending?utm_source=readme)
+## Development
+Run `pnpm --filter studio dev` to launch the Studio interface on a local port.
