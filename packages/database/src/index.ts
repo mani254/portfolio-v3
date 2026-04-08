@@ -23,6 +23,7 @@ export { User } from "./schemas/user.schema";
 export { Chat } from "./schemas/chat.schema";
 export { Message } from "./schemas/message.schema";
 export { RateLimit } from "./schemas/ratelimit.schema";
+export { Otp } from "./schemas/otp.schema";
 
 // TypeScript interfaces
 export type { ISession } from "./schemas/session.schema";
@@ -44,3 +45,4 @@ export type {
   IRateLimit,
   RateLimitAction,
 } from "./schemas/ratelimit.schema";
+export type { IOtp, OtpType } from "./schemas/otp.schema";

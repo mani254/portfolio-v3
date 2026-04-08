@@ -12,6 +12,9 @@ import { Hamburger } from './Hamburger';
 import { MobileMenuContent } from './MobileMenuContent';
 import { ThemeButton } from './ThemeButton';
 import { NAV_ITEMS } from '@/lib/consts';
+import { useUserStore } from '@/store/userStore';
+import { useAuthModalStore } from '@/store/auth-modal-store';
+import { LogIn, User } from 'lucide-react';
 
 interface NavItem {
   label: string;
@@ -50,6 +53,8 @@ const NavBar = () => {
   const [menuActive, setMenuActive] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
+  const user = useUserStore(state => state.user);
+  const openModal = useAuthModalStore(state => state.openModal);
 
   const toggleMenu = () => setMenuActive(!menuActive);
 
@@ -137,23 +142,37 @@ const NavBar = () => {
           </div>
         </div>
 
-        <div>
-          <div className='bg-linear-to-b from-foreground/10 to-foreground/5 backdrop-blur-md px-5 py-1.5 rounded-full border border-white/10 dark:border-white/5 relative z-20' >
-            <div className="flex items-center gap-5 glass-effect rounded-full relative">
-              <div className='hover-link'>
-                <ThemeButton />
-              </div>
-
-              <div className='hover-link'>
-                <Hamburger isActive={menuActive} toggle={toggleMenu} />
-              </div>
+        <div className="flex items-center gap-3">
+          <div className='bg-linear-to-b from-foreground/10 to-foreground/5 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/10 dark:border-white/5'>
+            <div className="flex items-center gap-3">
+              {user ? (
+                <Link
+                  href="/profile"
+                  className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary hover:bg-primary/20 transition-all border border-primary/20"
+                  title={user.name}
+                >
+                  <User className="w-4 h-4" />
+                </Link>
+              ) : (
+                <button
+                  onClick={() => openModal('login')}
+                  className="flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-full bg-primary text-primary-foreground hover:opacity-90 transition-all active:scale-95 shadow-lg shadow-primary/20"
+                >
+                  <LogIn className="w-3 h-3" />
+                  Sign In
+                </button>
+              )}
+              <div className="w-px h-4 bg-foreground/10" />
+              <ThemeButton />
             </div>
-
           </div>
 
-          <MobileMenuContent menuActive={menuActive} />
-
+          <div className='hover-link bg-linear-to-b from-foreground/10 to-foreground/5 backdrop-blur-md px-2 py-1.5 rounded-full border border-white/10 dark:border-white/5 relative z-20' >
+            <Hamburger isActive={menuActive} toggle={toggleMenu} />
+          </div>
         </div>
+
+        <MobileMenuContent menuActive={menuActive} />
       </div>
 
     </nav>

@@ -20,9 +20,6 @@ export interface IChat extends Document {
   /** The session that initiated this chat */
   sessionId: string;
 
-  /** Populated once the visitor is authenticated */
-  userId?: mongoose.Types.ObjectId;
-
   type: ChatType;
   status: ChatStatus;
 
@@ -63,12 +60,6 @@ const ChatSchema = new Schema<IChat>(
     sessionId: {
       type: String,
       required: true,
-      index: true,
-    },
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      default: null,
       index: true,
     },
     type: {
@@ -112,9 +103,6 @@ const ChatSchema = new Schema<IChat>(
 
 // Fetch all chats for a session (most recent first)
 ChatSchema.index({ sessionId: 1, updatedAt: -1 });
-
-// Fetch all chats for a logged-in user
-ChatSchema.index({ userId: 1, updatedAt: -1 });
 
 // Admin dashboard: filter by status
 ChatSchema.index({ status: 1, updatedAt: -1 });

@@ -60,6 +60,9 @@ import Cursor from "@/components/common/Cursor";
 import NavBar from "@/components/common/NavBar";
 import Footer from "@/components/layout/Footer";
 import { ThemeProvider } from "@/components/theme-provider";
+import ChatWidget from "@/components/chat/ChatWidget";
+import { AuthModal } from "@/components/auth/auth-modal";
+import { AuthHydrator } from "@/components/auth/AuthHydrator";
 
 export default function RootLayout({
   children,
@@ -69,7 +72,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${quicksand.variable} ${inter.variable}`} suppressHydrationWarning>
       <body
-        className="antialiased"
+        className="antialiased w-full overflow-x-hidden"
       >
 
         <ThemeProvider
@@ -82,6 +85,9 @@ export default function RootLayout({
           <Cursor />
           {children}
           <Footer />
+          <ChatWidget />
+          <AuthHydrator />
+          <AuthModal />
           {/* <Toaster richColors position="top-right" /> */}
         </ThemeProvider>
       </body>

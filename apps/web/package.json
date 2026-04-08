@@ -23,8 +23,10 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@sanity/image-url": "^2.0.3",
     "@sanity/preview-kit": "^6.2.0",
+    "axios": "^1.14.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "database": "workspace:*",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "framer-motion": "^12.36.0",
@@ -44,10 +46,12 @@
     "react-hook-form": "^7.71.2",
     "react-phone-number-input": "^3.4.16",
     "sanity-lib": "workspace:*",
+    "socket.io-client": "^4.8.3",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.5.0",
     "vaul": "^1.1.2",
-    "zod": "^4.3.6"
+    "zod": "^4.3.6",
+    "zustand": "^5.0.12"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

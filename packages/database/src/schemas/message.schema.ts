@@ -36,12 +36,6 @@ export interface IMessage extends Document {
   chatId: mongoose.Types.ObjectId;
   sessionId: string;
 
-  /**
-   * Populated for authenticated users; null for anonymous messages.
-   * For AI messages, leave null and use role === "assistant".
-   */
-  userId?: mongoose.Types.ObjectId;
-
   role: MessageRole;
   contentType: ContentType;
 
@@ -103,11 +97,6 @@ const MessageSchema = new Schema<IMessage>(
       type: String,
       required: true,
       index: true,
-    },
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      default: null,
     },
     role: {
       type: String,

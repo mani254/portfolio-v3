@@ -22,7 +22,6 @@ export type RateLimitAction =
 
 export interface IRateLimit extends Document {
   sessionId: string;
-  userId?: mongoose.Types.ObjectId;
   action: RateLimitAction;
 
   /** Number of remaining allowed requests in this window */
@@ -44,11 +43,6 @@ export interface IRateLimit extends Document {
 const RateLimitSchema = new Schema<IRateLimit>(
   {
     sessionId: { type: String, required: true },
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      default: null,
-    },
     action: {
       type: String,
       enum: ["send_message", "create_chat", "auth_attempt", "file_upload"],

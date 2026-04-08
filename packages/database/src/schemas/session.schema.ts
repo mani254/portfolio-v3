@@ -12,9 +12,6 @@ export interface ISession extends Document {
   /** Opaque identifier stored in browser localStorage — always present */
   sessionId: string;
 
-  /** Linked only after authentication */
-  userId?: mongoose.Types.ObjectId;
-
   /** Client metadata — useful for analytics and abuse detection */
   metadata: {
     userAgent?: string;
@@ -38,12 +35,6 @@ const SessionSchema = new Schema<ISession>(
       type: String,
       required: true,
       unique: true,
-      index: true,
-    },
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      default: null,
       index: true,
     },
     metadata: {

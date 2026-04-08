@@ -35,6 +35,10 @@ export interface IUser extends Document {
     notifications?: boolean;
   };
 
+  /** OTP-based email verification gate */
+  emailVerified: boolean;
+  tokenVersion: number;
+
   lastLoginAt?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -73,6 +77,8 @@ const UserSchema = new Schema<IUser>(
       },
       notifications: { type: Boolean, default: true },
     },
+    emailVerified: { type: Boolean, default: false },
+    tokenVersion: { type: Number, default: 0 },
     lastLoginAt: { type: Date, default: null },
   },
   {
