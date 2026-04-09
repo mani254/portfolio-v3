@@ -26,7 +26,7 @@ function ThinkingDots() {
 }
 
 export default function ChatMessageBubble({ message }: ChatMessageProps) {
-    const isUser    = message.role === 'user';
+    const isUser = message.role === 'user';
     const isThinking = message.isThinking;
 
     return (

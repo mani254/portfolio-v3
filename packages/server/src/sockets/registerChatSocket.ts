@@ -24,36 +24,11 @@ import { Chat, Message, Session } from 'database';
 import type { AuthenticatedSocket } from './types';
 import { checkRateLimit } from '../middleware/rateLimiter';
 import { redis } from '../utils/redis';
-import type { ChatType } from 'database';
+
 import { logger } from '../utils/logger';
-import { env } from '../config/env';
+import { generateAIResponse } from '../llm/groq';
 
-// ---------------------------------------------------------------------------
-// AI response generator
-// ---------------------------------------------------------------------------
-// Calls Groq SDK and returns the full response string.
-// When enabled, the socket already emits chat:ai:thinking before calling this.
-// ---------------------------------------------------------------------------
-async function generateAIResponse(
-    _content: string,
-    _model: string,
-): Promise<string> {
-    // TODO: Replace with real Groq SDK call:
-    //
-    // import Groq from 'groq-sdk';
-    // import { getGrockApiKey } from '../utils/env';
-    //
-    // const groq = new Groq({ apiKey: getGrockApiKey() });
-    // const completion = await groq.chat.completions.create({
-    //     model: _model,
-    //     messages: [{ role: 'user', content: _content }],
-    // });
-    // return completion.choices[0]?.message?.content ?? '';
 
-    // Placeholder — simulates thinking delay
-    await new Promise((r) => setTimeout(r, 1500));
-    return 'I am your AI assistant. (Groq integration pending — replace the placeholder in registerChatSocket.ts)';
-}
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -68,6 +43,7 @@ function chatOwnerQuery(chatId: string, sessionId: string) {
 }
 
 const AI_LOCK_KEY = (chatId: string) => `ai:lock:${chatId}`;
+const CHAT_HISTORY_KEY = (chatId: string) => `chat:history:${chatId}`;
 
 // ---------------------------------------------------------------------------
 // Main handler
@@ -129,6 +105,9 @@ export const registerChatSocket = (socket: AuthenticatedSocket, io: Server): voi
                 chat.lastMessage = undefined;
                 await chat.save();
 
+                // Clear history cache
+                await redis.del(CHAT_HISTORY_KEY(chatId));
+
                 ack?.({ ok: true });
                 socket.to(chatId).emit('chat:cleared', { chatId });
             } catch (err) {
@@ -149,7 +128,7 @@ export const registerChatSocket = (socket: AuthenticatedSocket, io: Server): voi
             try {
 
                 // Rate limit
-                const limit      = 20;
+                const limit = 20;
                 const rateResult = await checkRateLimit(sessionId, limit);
                 if (!rateResult.allowed) {
                     const msg = `Rate limit exceeded. Retry in ${Math.ceil(rateResult.retryAfterSec)}s.`;
@@ -187,16 +166,23 @@ export const registerChatSocket = (socket: AuthenticatedSocket, io: Server): voi
                 const userMessage = await Message.create({
                     chatId,
                     sessionId,
-                    role:        'user',
+                    role: 'user',
                     contentType,
-                    content:     content.trim(),
-                    status:      'sent',
+                    content: content.trim(),
+                    status: 'sent',
                 });
 
                 // Broadcast to other tabs but NOT the sender (who relies on the ack/optimistic UI)
                 // We pass back the clientId so clients can firmly deduplicate if they happen to receive it.
                 const messageData = userMessage.toObject();
                 socket.to(chatId).emit('chat:message:new', { ...messageData, clientId });
+
+                // Update history cache
+                redis.rpush(CHAT_HISTORY_KEY(chatId), JSON.stringify({ role: 'user', content: content.trim() }))
+                    .then(() => redis.ltrim(CHAT_HISTORY_KEY(chatId), -20, -1))
+                    .then(() => redis.expire(CHAT_HISTORY_KEY(chatId), 3600))
+                    .catch(e => logger.error({ e, chatId }, 'Failed to update user message history cache'));
+
                 Session.findOneAndUpdate({ sessionId }, { $inc: { messageCount: 1 } }).exec();
                 ack?.({ ok: true, messageId: userMessage._id });
 
@@ -207,30 +193,36 @@ export const registerChatSocket = (socket: AuthenticatedSocket, io: Server): voi
                 const lock = await redis.set(AI_LOCK_KEY(chatId), '1', 'EX', 60, 'NX');
                 if (!lock) return;
 
-                const aiModel = chat.aiModel ?? 'llama3-8b-8192';
+                const aiModel = chat.aiModel ?? 'llama-3.1-8b-instant';
 
                 // Emit thinking indicator — client shows animated dots
                 io.to(chatId).emit('chat:ai:thinking', { chatId, isThinking: true });
 
                 try {
-                    const fullResponse = await generateAIResponse(content, aiModel);
+                    const fullResponse = await generateAIResponse(content, aiModel, chatId);
 
                     const aiMessage = await Message.create({
                         chatId,
                         sessionId,
-                        role:        'assistant',
+                        role: 'assistant',
                         contentType: 'markdown',
-                        content:     fullResponse,
-                        status:      'delivered',
-                        aiMetadata:  { model: aiModel },
+                        content: fullResponse,
+                        status: 'delivered',
+                        aiMetadata: { model: aiModel },
                     });
+
+                    // Update history cache
+                    redis.rpush(CHAT_HISTORY_KEY(chatId), JSON.stringify({ role: 'assistant', content: fullResponse }))
+                        .then(() => redis.ltrim(CHAT_HISTORY_KEY(chatId), -20, -1))
+                        .then(() => redis.expire(CHAT_HISTORY_KEY(chatId), 3600))
+                        .catch(e => logger.error({ e, chatId }, 'Failed to update AI message history cache'));
 
                     // Stop thinking indicator and deliver full response
                     io.to(chatId).emit('chat:ai:thinking', { chatId, isThinking: false });
                     io.to(chatId).emit('chat:ai:done', {
                         chatId,
                         messageId: aiMessage._id,
-                        content:   fullResponse,
+                        content: fullResponse,
                     });
                 } catch (aiErr) {
                     console.error('[chat:ai]', aiErr);
@@ -250,9 +242,9 @@ export const registerChatSocket = (socket: AuthenticatedSocket, io: Server): voi
     // ── chat:typing ────────────────────────────────────────────────────────
     socket.on('chat:typing', (payload: { chatId: string; isTyping: boolean }) => {
         socket.to(payload.chatId).emit('chat:typing', {
-            chatId:    payload.chatId,
+            chatId: payload.chatId,
             sessionId,
-            isTyping:  payload.isTyping,
+            isTyping: payload.isTyping,
         });
     });
 

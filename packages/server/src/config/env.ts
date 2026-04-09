@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const envSchema = z.object({
     NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
@@ -32,6 +34,19 @@ if (!result.success) {
     console.error('❌ Invalid environment variables:');
     console.error(result.error.flatten().fieldErrors);
     process.exit(1);
+}
+
+// todo:write a function get grok api key where it will fetch
+
+export function getGrokApiKey() {
+    const environment = process.env.ENVIRONMENT || 'local'
+    if (environment === 'production') {
+        return process.env.GROQ_CHATAPI_PRODUCTION_API_KEY
+    }
+    else {
+        return process.env.GROQ_CHATAPI_DEVELOPMENT_API_KEY
+    }
+
 }
 
 export const env = result.data;
