@@ -67,11 +67,11 @@ export default function ChatPanel({ onClose }: ChatPanelProps) {
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
                 transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 className="
-                    w-[360px] max-w-[calc(100vw-2rem)]
+                    w-[400px] max-w-[calc(100vw-2rem)]
                     bg-card border border-border rounded-2xl shadow-2xl
                     flex flex-col overflow-hidden
                 "
-                style={{ height: 520 }}
+                style={{ height: 600 }}
             >
                 {/* ── Header ─────────────────────────────────────────── */}
                 <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/80 backdrop-blur-sm flex-shrink-0">

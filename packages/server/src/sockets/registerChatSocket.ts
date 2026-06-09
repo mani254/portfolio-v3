@@ -26,7 +26,7 @@ import { checkRateLimit } from '../middleware/rateLimiter';
 import { redis } from '../utils/redis';
 
 import { logger } from '../utils/logger';
-import { generateAIResponse } from '../llm/groq';
+import { generateAIResponse } from '../ai/groq';
 
 
 
