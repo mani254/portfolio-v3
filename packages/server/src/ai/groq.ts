@@ -11,6 +11,8 @@ const groq = new Groq({
 
 const SYSTEM_PROMPT = `
 You are Jarvis, the personal assistant of Manikanta Mamidi, a Full Stack Developer.
+Today's date is: ${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}.
+If anyone asks about Manikanta's age, you can calculate it using his birthdate (24-04-2001) and today's date.
 
 Your role is to represent Manikanta and help visitors understand his skills, experience, and projects.
 
@@ -84,6 +86,7 @@ export async function generateAIResponse(
   content: string,
   model: string,
   chatId: string,
+  onChunk?: (text: string) => void
 ): Promise<string> {
   const history = await getChatContext(chatId);
 
@@ -91,9 +94,7 @@ export async function generateAIResponse(
 
   const context = relevantChunks.join("\n");
 
-  console.log(context, '------')
-
-  const completion = await groq.chat.completions.create({
+  const stream = await groq.chat.completions.create({
     model: model,
     messages: [
       {
@@ -110,7 +111,17 @@ export async function generateAIResponse(
         content: content,
       },
     ],
+    stream: true,
   });
 
-  return completion.choices[0].message.content || 'something went wrong';
+  let fullResponse = "";
+  for await (const chunk of stream) {
+    const delta = chunk.choices[0]?.delta?.content || "";
+    fullResponse += delta;
+    if (delta && onChunk) {
+      onChunk(delta);
+    }
+  }
+
+  return fullResponse || 'something went wrong';
 }

@@ -27,7 +27,7 @@ interface UseChatReturn {
     clearChat: () => Promise<void>;
     currentChatId: string | null;
     isConnected: boolean;
-    isAiThinking: boolean;
+    isAiGenerating: boolean;
     connectionError: string | null;
 }
 
@@ -51,7 +51,7 @@ export function useChat(): UseChatReturn {
     const [messages, setMessages] = useState<ChatMessage[]>([]);
     const [currentChatId, setCurrentChatId] = useState<string | null>(null);
     const [isConnected, setIsConnected] = useState(false);
-    const [isAiThinking, setIsAiThinking] = useState(false);
+    const [isAiGenerating, setIsAiGenerating] = useState(false);
     const [connectionError, setConnectionError] = useState<string | null>(null);
 
     const socketRef = useRef<Socket | null>(null);
@@ -126,8 +126,8 @@ export function useChat(): UseChatReturn {
 
         // AI thinking state
         socket.on('chat:ai:thinking', ({ isThinking }: { chatId: string; isThinking: boolean }) => {
-            setIsAiThinking(isThinking);
             if (isThinking) {
+                setIsAiGenerating(true);
                 // Add transient thinking bubble
                 setMessages((prev) => {
                     if (prev.some((m) => m.isThinking)) return prev;
@@ -148,26 +148,60 @@ export function useChat(): UseChatReturn {
         });
 
         // AI full response
-        socket.on('chat:ai:done', ({ content, messageId }: { chatId: string; messageId: string; content: string }) => {
-            setIsAiThinking(false);
-            setMessages((prev) => [
-                ...prev.filter((m) => !m.isThinking),
-                {
-                    _id: messageId,
-                    role: 'assistant',
-                    content,
-                    contentType: 'markdown',
-                    status: 'delivered',
-                    createdAt: new Date().toISOString(),
-                },
-            ]);
+        socket.on('chat:ai:done', ({ content, messageId, streamId }: { chatId: string; messageId: string; streamId?: string; content: string }) => {
+            setIsAiGenerating(false);
+            setMessages((prev) => {
+                // Remove the transient streaming bubble and thinking bubble
+                const filtered = prev.filter((m) => !m.isThinking && m._id !== streamId);
+                return [
+                    ...filtered,
+                    {
+                        _id: messageId,
+                        role: 'assistant',
+                        content,
+                        contentType: 'markdown',
+                        status: 'delivered',
+                        createdAt: new Date().toISOString(),
+                    },
+                ];
+            });
+        });
+
+        // AI chunk response (Streaming)
+        socket.on('chat:ai:chunk', ({ messageId, delta }: { chatId: string; messageId: string; delta: string }) => {
+            setMessages((prev) => {
+                const existingIndex = prev.findIndex((m) => m._id === messageId);
+                if (existingIndex !== -1) {
+                    // Update existing streaming bubble
+                    const updated = [...prev];
+                    updated[existingIndex] = {
+                        ...updated[existingIndex],
+                        content: updated[existingIndex].content + delta,
+                    };
+                    return updated;
+                } else {
+                    // Create new streaming bubble (and remove thinking bubble)
+                    const filtered = prev.filter((m) => !m.isThinking);
+                    return [
+                        ...filtered,
+                        {
+                            _id: messageId,
+                            role: 'assistant',
+                            content: delta,
+                            contentType: 'markdown',
+                            status: 'delivered', // streaming implies delivery in progress
+                            createdAt: new Date().toISOString(),
+                        },
+                    ];
+                }
+            });
         });
 
         // AI error
         socket.on('chat:ai:error', () => {
-            setIsAiThinking(false);
+            setIsAiGenerating(false);
             setMessages((prev) => [
-                ...prev.filter((m) => !m.isThinking),
+                ...prev.filter((m) => !m.isThinking && !m._id.startsWith('ai_')), // remove thinking & incomplete streams
                 {
                     _id: `err_${Date.now()}`,
                     role: 'assistant',
@@ -224,16 +258,31 @@ export function useChat(): UseChatReturn {
         socket.emit(
             'chat:message',
             { chatId, content: content.trim(), clientId: optimisticId },
-            (res: { ok: boolean; messageId?: string }) => {
+            (res: { ok: boolean; messageId?: string; error?: string; message?: string }) => {
                 if (res.ok && res.messageId) {
                     // Replace optimistic bubble with server-assigned ID
                     setMessages((prev) =>
-                        prev.map((m) => m._id === optimisticId ? { ...m, _id: res.messageId!, status: 'sent' } : m),
+                        prev.map((m) => m._id === optimisticId ? { ...m, _id: res.messageId!, status: 'sent' as const } : m),
                     );
                 } else {
-                    setMessages((prev) =>
-                        prev.map((m) => m._id === optimisticId ? { ...m, status: 'failed' } : m),
-                    );
+                    // Show specific error from server if provided
+                    if (res.message) {
+                         setMessages((prev) => [
+                            ...prev.map((m) => m._id === optimisticId ? { ...m, status: 'failed' as const } : m),
+                            {
+                                _id: `sys_${Date.now()}`,
+                                role: 'assistant',
+                                content: `⚠️ ${res.message}`,
+                                contentType: 'text',
+                                status: 'failed' as const,
+                                createdAt: new Date().toISOString(),
+                            }
+                        ]);
+                    } else {
+                        setMessages((prev) =>
+                            prev.map((m) => m._id === optimisticId ? { ...m, status: 'failed' as const } : m),
+                        );
+                    }
                 }
             },
         );
@@ -245,7 +294,8 @@ export function useChat(): UseChatReturn {
         clearChat,
         currentChatId,
         isConnected,
-        isAiThinking,
+        isAiGenerating,
         connectionError,
     };
 }
+

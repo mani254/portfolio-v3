@@ -57,3 +57,38 @@ export const checkRateLimit = async (
 
     return { allowed: true, remaining: maxPerWindow - count };
 };
+
+const DAILY_WINDOW_SEC = 24 * 60 * 60; // 24 hours
+
+/**
+ * Check daily limits per session for AI interactions.
+ * 
+ * @param sessionId Unique session identifier
+ * @param maxPerDay Max AI messages allowed per day (default 50)
+ */
+export const checkDailySessionLimit = async (
+    sessionId: string,
+    maxPerDay = 50,
+): Promise<RateLimitResult> => {
+    // Window is aligned to the start of the current UTC day
+    const day = Math.floor(Date.now() / (DAILY_WINDOW_SEC * 1000));
+    const key = `daily_rate:${sessionId}:${day}`;
+
+    const pipeline = redis.pipeline();
+    pipeline.incr(key);
+    pipeline.ttl(key);
+    const results = await pipeline.exec();
+
+    const count = (results?.[0]?.[1] as number) ?? 1;
+    const ttl   = (results?.[1]?.[1] as number) ?? -1;
+
+    if (count === 1 || ttl === -1) {
+        await redis.expire(key, DAILY_WINDOW_SEC + 60);
+    }
+
+    if (count > maxPerDay) {
+        return { allowed: false, retryAfterSec: DAILY_WINDOW_SEC - (Date.now() % (DAILY_WINDOW_SEC * 1000)) / 1000 };
+    }
+
+    return { allowed: true, remaining: maxPerDay - count };
+};
