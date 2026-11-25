@@ -1,10 +1,17 @@
+import { AuthModal } from "@/components/auth/auth-modal";
+import { AuthHydrator } from "@/components/auth/AuthHydrator";
+import ChatWidget from "@/components/chat/ChatWidget";
+import Cursor from "@/components/common/Cursor";
+import Footer from "@/components/common/Footer";
+import MobileNav from "@/components/common/MobileNav";
+import Sidebar from "@/components/common/Sidebar";
+import { Toaster } from "@/components/ui/sonner";
 import type { Metadata } from "next";
-import { Inter, Quicksand } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-
-const quicksand = Quicksand({
-  variable: "--font-quicksand",
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta-sans",
   subsets: ["latin"],
 });
 
@@ -14,55 +21,37 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:1234"
+  ),
   title: {
-    default: "Portfolio",
-    template: "%s | Portfolio",
+    default: "Sai Manikanta — Full-Stack Developer",
+    template: "%s | Sai Manikanta",
   },
-  description: "A professional portfolio showcasing projects, insights, and posts.",
+  description:
+    "Full-stack developer with 3+ years of experience building scalable web applications and seamless user experiences.",
   openGraph: {
-    title: "Portfolio",
-    description: "A professional portfolio showcasing projects, insights, and posts.",
+    title: "Sai Manikanta — Full-Stack Developer",
+    description:
+      "Full-stack developer with 3+ years of experience building scalable web applications.",
     url: "/",
-    siteName: "Portfolio UI",
-    images: [
-      {
-        url: "/og-image.jpg", // placeholder, assuming it exists
-        width: 1200,
-        height: 630,
-        alt: "Portfolio Preview",
-      },
-    ],
+    siteName: "Sai Manikanta",
     locale: "en_US",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Portfolio",
-    description: "A professional portfolio showcasing projects, insights, and posts.",
+    title: "Sai Manikanta — Full-Stack Developer",
+    description:
+      "Full-stack developer with 3+ years of experience building scalable web applications.",
   },
   robots: {
     index: true,
     follow: true,
-    nocache: false,
-    googleBot: {
-      index: true,
-      follow: true,
-      noimageindex: false,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
   },
 };
 
-import Cursor from "@/components/common/Cursor";
-import NavBar from "@/components/common/NavBar";
-import Footer from "@/components/layout/Footer";
-import { ThemeProvider } from "@/components/theme-provider";
-import ChatWidget from "@/components/chat/ChatWidget";
-import { AuthModal } from "@/components/auth/auth-modal";
-import { AuthHydrator } from "@/components/auth/AuthHydrator";
+
 
 export default function RootLayout({
   children,
@@ -70,26 +59,41 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${quicksand.variable} ${inter.variable}`} suppressHydrationWarning>
-      <body
-        className="antialiased w-full overflow-x-hidden"
-      >
+    <html
+      lang="en"
+      className={`${plusJakartaSans.variable} ${inter.variable}`}
+    >
+      <body className="antialiased w-full overflow-x-hidden bg-background text-foreground">
+        {/* Custom cursor */}
+        <Cursor />
 
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem={false}
-          disableTransitionOnChange
-        >
-          <NavBar />
-          <Cursor />
-          {children}
+        {/* Desktop sidebar (fixed, 240px wide) */}
+        <Sidebar />
+
+        {/* Subtle, unnoticeable animated background colors for a cool ambient depth */}
+        <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden select-none">
+          <div className="absolute -top-[12%] -left-[8%] w-[50vw] h-[50vw] max-w-[650px] max-h-[650px] rounded-full bg-gradient-to-br from-emerald-200/25 via-teal-100/15 to-transparent blur-3xl animate-ambient-1" />
+          <div className="absolute top-[25%] -right-[10%] w-[45vw] h-[45vw] max-w-[600px] max-h-[600px] rounded-full bg-gradient-to-bl from-amber-200/20 via-orange-100/15 to-transparent blur-3xl animate-ambient-2" />
+          <div className="absolute -bottom-[15%] left-[25%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] rounded-full bg-gradient-to-tr from-lime-100/20 via-slate-100/20 to-transparent blur-3xl" />
+        </div>
+
+        {/* Main content area — offset by sidebar on md+ */}
+        <div className="md:pl-[240px] min-h-screen flex flex-col">
+          {/* Mobile top bar with hamburger */}
+          <MobileNav />
+
+          {/* Page content */}
+          <div className="flex-1">{children}</div>
+
+          {/* Footer */}
           <Footer />
-          <ChatWidget />
-          <AuthHydrator />
-          <AuthModal />
-          {/* <Toaster richColors position="top-right" /> */}
-        </ThemeProvider>
+        </div>
+
+        {/* Global overlays */}
+        <ChatWidget />
+        <AuthHydrator />
+        <AuthModal />
+        <Toaster />
       </body>
     </html>
   );

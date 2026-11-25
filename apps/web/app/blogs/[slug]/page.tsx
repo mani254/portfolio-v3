@@ -19,7 +19,7 @@ export async function generateStaticParams() {
     return blogs.map((blog) => ({
       slug: blog.slug,
     }));
-  } catch (error) {
+  } catch {
     return [];
   }
 }

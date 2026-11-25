@@ -17,29 +17,8 @@ export const commonTimezones = [
   { label: "America/Sao_Paulo (BRT)", value: "America/Sao_Paulo" },
 ]
 
-export const footerLinks = [
-  {
-    title: "General",
-    links: [
-      { label: "Home", href: "/" },
-      { label: "About", href: "/about" },
-      { label: "Projects", href: "/projects" },
-      { label: "Blog", href: "/blog" },
-    ],
-  },
-  {
-    title: "More",
-    links: [
-      { label: "Contact", href: "/contact" },
-      { label: "Book a Call", href: "/book-a-call" },
-      { label: "Links", href: "/links" },
-    ],
-  },
-]
-
 export const NAV_ITEMS = [
   { label: "Home", to: "/" },
-  { label: "About", to: "/about" },
   { label: "Projects", to: "/projects" },
   { label: "Blogs", to: "/blogs" },
   {
@@ -50,9 +29,8 @@ export const NAV_ITEMS = [
 
 export const MOBILE_NAV_LINKS = [
   { label: "Home", to: "/" },
-  { label: "About", to: "/about" },
-  { label: "Services", to: "/services" },
-  { label: "Projects", to: "/projects" },
+  { label: "Work", to: "/projects" },
+  { label: "Blogs", to: "/blogs" },
   { label: "Contact", to: "/contact" },
 ];
 

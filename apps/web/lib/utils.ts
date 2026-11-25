@@ -2,9 +2,8 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
-
 
 export function slugify(text: string): string {
   return text
@@ -15,96 +14,45 @@ export function slugify(text: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-
+/* ── Project scroll section colors (light-only palette) ── */
 export const PROJECT_SECTION_COLORS = [
   {
-    light: {
-      backgroundColor: "#F8BBD0",
-      boxColor: "#F48FB1",
-      cursorColor: "#E91E63",
-    },
-    dark: {
-      backgroundColor: "#1a1013",
-      boxColor: "#3d1c24",
-      cursorColor: "#ff4081",
-    }
+    backgroundColor: "#FFF0F5",   // soft rose
+    boxColor: "#FFD6E7",
+    cursorColor: "#E91E63",
   },
   {
-    light: {
-      backgroundColor: "#D1C4E9",
-      boxColor: "#9575CD",
-      cursorColor: "#673AB7",
-    },
-    dark: {
-      backgroundColor: "#110e1a",
-      boxColor: "#211a3d",
-      cursorColor: "#b39ddb",
-    }
+    backgroundColor: "#F3EEFF",   // soft lavender
+    boxColor: "#D9C5FB",
+    cursorColor: "#7C3AED",
   },
   {
-    light: {
-      backgroundColor: "#FFCC80",
-      boxColor: "#FFB74D",
-      cursorColor: "#F57C00",
-    },
-    dark: {
-      backgroundColor: "#1a150e",
-      boxColor: "#3d2e1c",
-      cursorColor: "#ffb74d",
-    }
+    backgroundColor: "#FFF8EC",   // soft amber
+    boxColor: "#FFE4A8",
+    cursorColor: "#D97706",
   },
   {
-    light: {
-      backgroundColor: "#E1BEE7",
-      boxColor: "#CE93D8",
-      cursorColor: "#8E24AA",
-    },
-    dark: {
-      backgroundColor: "#16111a",
-      boxColor: "#2d1c3d",
-      cursorColor: "#e1bee7",
-    }
+    backgroundColor: "#EEFBF4",   // soft mint
+    boxColor: "#BBF0D4",
+    cursorColor: "#059669",
   },
   {
-    light: {
-      backgroundColor: "#BBDEFB",
-      boxColor: "#64B5F6",
-      cursorColor: "#1E88E5",
-    },
-    dark: {
-      backgroundColor: "#0e131a",
-      boxColor: "#1c2a3d",
-      cursorColor: "#90caf9",
-    }
-  }
-]
+    backgroundColor: "#EEF4FF",   // soft sky
+    boxColor: "#BFDBFE",
+    cursorColor: "#1D4ED8",
+  },
+];
 
-export function getCursorColor() {
-  let theme = "light"
-  if (typeof window !== "undefined") {
-    theme = localStorage.getItem("theme") || "light"
-  }
-  if (theme == "light") {
-    return "#35353B88"
-  }
-  else {
-    return "#D5D5D988"
-  }
-}
-export function getCursorBackgroundColor() {
-  let theme = "light"
-  if (typeof window !== "undefined") {
-    theme = localStorage.getItem("theme") || "light"
-  }
-  if (theme == "light") {
-    return "rgba(85,85,85,0.1)"
-  }
-  else {
-    return "rgba(213,213,217,0.1)"
-  }
+/* ── Cursor helpers (light-only) ── */
+export function getCursorColor(): string {
+  return "#1a1a1888";
 }
 
-export const getProjectColor = (index: number, theme: string = "light") => {
-  const color = PROJECT_SECTION_COLORS[index % PROJECT_SECTION_COLORS.length];
-  return theme === "dark" ? color.dark : color.light;
+export function getCursorBackgroundColor(): string {
+  return "rgba(26, 26, 24, 0.06)";
 }
+
+/* ── Project section color getter (theme param kept for compat but always light) ── */
+export const getProjectColor = (index: number, _theme = "light") => {
+  return PROJECT_SECTION_COLORS[index % PROJECT_SECTION_COLORS.length];
+};

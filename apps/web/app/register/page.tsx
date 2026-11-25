@@ -1,15 +1,20 @@
 'use client';
 
+import { Suspense } from 'react';
 import { RegisterForm } from '@/components/auth/register-form';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 
-export default function RegisterPage() {
+function RegisterContent() {
     const searchParams = useSearchParams();
     const redirectUrl = searchParams.get('redirect') || '/';
 
+    return <RegisterForm redirectUrl={redirectUrl} />;
+}
+
+export default function RegisterPage() {
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden">
             {/* Background Decorations */}
@@ -33,7 +38,13 @@ export default function RegisterPage() {
                 </Link>
 
                 <div className="pt-4">
-                    <RegisterForm redirectUrl={redirectUrl} />
+                    <Suspense fallback={
+                        <div className="flex items-center justify-center py-12">
+                            <Loader2 className="w-6 h-6 text-primary animate-spin" />
+                        </div>
+                    }>
+                        <RegisterContent />
+                    </Suspense>
                 </div>
             </motion.div>
         </div>

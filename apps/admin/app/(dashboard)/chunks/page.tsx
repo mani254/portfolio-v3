@@ -1,19 +1,48 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import {
+  Search,
+  PlusCircle,
+  UploadCloud,
+  Trash2,
+  Edit2,
+  Copy,
+  Check,
+  RefreshCw,
+  AlertCircle,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  X,
+} from "lucide-react";
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
-interface Chunk { id: string; text: string; }
-interface Meta { total: number; page: number; limit: number; totalPages: number; }
+interface Chunk {
+  id: string;
+  text: string;
+}
 
-function Badge({ children, color }: { children: React.ReactNode; color: string }) {
-  return (
-    <span style={{
-      padding: "2px 8px", borderRadius: "4px", fontSize: "11px", fontWeight: 600,
-      background: `${color}20`, color,
-    }}>{children}</span>
-  );
+interface Meta {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
 }
 
 export default function ChunksPage() {
@@ -26,53 +55,67 @@ export default function ChunksPage() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null); // id to delete
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const [toast, setToast] = useState<{ msg: string; type: "success" | "error" } | null>(null);
   const [saving, setSaving] = useState(false);
 
   // Debounce search
   useEffect(() => {
-    const t = setTimeout(() => setDebouncedSearch(search), 400);
+    const t = setTimeout(() => setDebouncedSearch(search), 350);
     return () => clearTimeout(t);
   }, [search]);
 
-  useEffect(() => { setPage(1); }, [debouncedSearch]);
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch]);
 
-  const showToast = useCallback((msg: string, type: "success" | "error" = "success") => {
-    setToast({ msg, type });
-    setTimeout(() => setToast(null), 3500);
-  }, []);
+  const showToast = useCallback(
+    (msg: string, type: "success" | "error" = "success") => {
+      setToast({ msg, type });
+      setTimeout(() => setToast(null), 3500);
+    },
+    []
+  );
 
   const loadChunks = useCallback(async () => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({ page: String(page), limit: "20" });
+      const params = new URLSearchParams({ page: String(page), limit: "15" });
       if (debouncedSearch) params.set("search", debouncedSearch);
-      const r = await fetch(`${API}/api/chunks?${params}`, { credentials: "include" });
+      const r = await fetch(`${API}/api/chunks?${params}`, {
+        credentials: "include",
+      });
       const json = await r.json();
       setChunks(json.data || []);
       setMeta(json.meta || null);
+    } catch {
+      showToast("Failed to load chunks", "error");
     } finally {
       setLoading(false);
     }
-  }, [page, debouncedSearch]);
+  }, [page, debouncedSearch, showToast]);
 
-  useEffect(() => { loadChunks(); }, [loadChunks]);
+  useEffect(() => {
+    loadChunks();
+  }, [loadChunks]);
 
-  // ── Selection ─────────────────────────────────────────────────────────────
+  // Selection
   const toggleSelect = (id: string) => {
     setSelected((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   };
+
   const toggleAll = () => {
     if (selected.size === chunks.length) setSelected(new Set());
     else setSelected(new Set(chunks.map((c) => c.id)));
   };
 
-  // ── Edit ──────────────────────────────────────────────────────────────────
+  // Edit
   function startEdit(chunk: Chunk) {
     setEditingId(chunk.id);
     setEditText(chunk.text);
@@ -83,241 +126,364 @@ export default function ChunksPage() {
     setSaving(true);
     try {
       const r = await fetch(`${API}/api/chunks/${editingId}`, {
-        method: "PUT", credentials: "include",
+        method: "PUT",
+        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: editText.trim() }),
       });
-      if (r.ok) { showToast("Chunk updated ✓"); setEditingId(null); loadChunks(); }
-      else showToast("Update failed", "error");
-    } finally { setSaving(false); }
+      if (r.ok) {
+        showToast("Chunk updated and re-embedded successfully ✓");
+        setEditingId(null);
+        loadChunks();
+      } else {
+        showToast("Update failed", "error");
+      }
+    } finally {
+      setSaving(false);
+    }
   }
 
-  // ── Delete ────────────────────────────────────────────────────────────────
+  // Delete
   async function confirmDelete(id: string) {
-    const r = await fetch(`${API}/api/chunks/${id}`, { method: "DELETE", credentials: "include" });
-    if (r.ok) { showToast("Chunk deleted ✓"); setDeleteConfirm(null); loadChunks(); }
-    else showToast("Delete failed", "error");
+    const r = await fetch(`${API}/api/chunks/${id}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    if (r.ok) {
+      showToast("Chunk deleted ✓");
+      setDeleteConfirm(null);
+      loadChunks();
+    } else {
+      showToast("Delete failed", "error");
+    }
   }
 
   async function bulkDelete() {
     if (selected.size === 0) return;
     const r = await fetch(`${API}/api/chunks/bulk-delete`, {
-      method: "POST", credentials: "include",
+      method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ids: Array.from(selected) }),
     });
-    if (r.ok) { showToast(`Deleted ${selected.size} chunks ✓`); setSelected(new Set()); loadChunks(); }
-    else showToast("Bulk delete failed", "error");
+    if (r.ok) {
+      showToast(`Deleted ${selected.size} chunks ✓`);
+      setSelected(new Set());
+      loadChunks();
+    } else {
+      showToast("Bulk delete failed", "error");
+    }
+  }
+
+  function copyToClipboard(id: string) {
+    navigator.clipboard.writeText(id);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
   }
 
   return (
-    <div style={{ padding: "32px" }}>
-      {/* Toast */}
+    <div className="space-y-6">
+      {/* Toast Notification */}
       {toast && (
-        <div style={{
-          position: "fixed", top: "20px", right: "20px", zIndex: 1000,
-          padding: "12px 20px", borderRadius: "10px",
-          background: toast.type === "success" ? "var(--success-muted)" : "var(--danger-muted)",
-          border: `1px solid ${toast.type === "success" ? "var(--success)" : "var(--danger)"}`,
-          color: toast.type === "success" ? "var(--success)" : "var(--danger)",
-          fontSize: "13px", fontWeight: 500,
-          boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
-        }}>
-          {toast.msg}
+        <div
+          className={`fixed top-5 right-5 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-lg border text-xs font-semibold animate-in fade-in slide-in-from-top-3 ${
+            toast.type === "success"
+              ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+              : "bg-red-50 border-red-200 text-red-800"
+          }`}
+        >
+          {toast.type === "success" ? (
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+          ) : (
+            <AlertCircle className="w-4 h-4 text-red-600" />
+          )}
+          <span>{toast.msg}</span>
         </div>
       )}
 
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "24px", flexWrap: "wrap", gap: "12px" }}>
+      {/* ── Page Header ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 style={{ fontSize: "24px", fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             Knowledge Base
           </h1>
-          <p style={{ color: "var(--text-secondary)", marginTop: "4px", fontSize: "13px" }}>
-            {meta ? `${meta.total} chunks total` : "Loading…"}
+          <p className="text-sm text-slate-500 mt-0.5">
+            {meta ? `${meta.total} total chunks indexed in ChromaDB` : "Loading corpus…"}
           </p>
         </div>
-        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+
+        <div className="flex items-center gap-2 flex-wrap">
           {selected.size > 0 && (
-            <button onClick={bulkDelete} style={{
-              padding: "8px 16px", borderRadius: "8px", fontSize: "13px", fontWeight: 600,
-              background: "var(--danger-muted)", border: "1px solid var(--danger)", color: "var(--danger)", cursor: "pointer",
-            }}>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={bulkDelete}
+              className="text-xs"
+            >
+              <Trash2 className="w-3.5 h-3.5 mr-1.5" />
               Delete {selected.size} selected
-            </button>
+            </Button>
           )}
-          <a href="/chunks/upload" style={{
-            padding: "8px 16px", borderRadius: "8px", fontSize: "13px", fontWeight: 600,
-            background: "var(--bg-card)", border: "1px solid var(--border)", color: "var(--text-primary)",
-            textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "6px",
-          }}>📤 Bulk Upload</a>
-          <a href="/chunks/new" style={{
-            padding: "8px 16px", borderRadius: "8px", fontSize: "13px", fontWeight: 600,
-            background: "linear-gradient(135deg, #6366f1, #818cf8)", border: "none", color: "#fff",
-            textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "6px",
-            boxShadow: "0 4px 16px #6366f130",
-          }}>➕ Add Chunk</a>
+
+          <Link href="/chunks/upload">
+            <Button variant="outline" size="sm" className="text-xs">
+              <UploadCloud className="w-3.5 h-3.5 mr-1.5 text-slate-500" />
+              Bulk Upload
+            </Button>
+          </Link>
+
+          <Link href="/chunks/new">
+            <Button size="sm" className="text-xs bg-indigo-600 hover:bg-indigo-700">
+              <PlusCircle className="w-3.5 h-3.5 mr-1.5" />
+              Add Chunk
+            </Button>
+          </Link>
         </div>
       </div>
 
-      {/* Search */}
-      <div style={{ marginBottom: "16px" }}>
-        <input
-          type="text"
-          placeholder="Search chunks…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{
-            width: "100%", maxWidth: "400px",
-            background: "var(--bg-card)", border: "1px solid var(--border)",
-            borderRadius: "8px", padding: "9px 14px",
-            color: "var(--text-primary)", fontSize: "13px", outline: "none",
-          }}
-          onFocus={(e) => e.target.style.borderColor = "var(--accent)"}
-          onBlur={(e) => e.target.style.borderColor = "var(--border)"}
-        />
-      </div>
-
-      {/* Table */}
-      <div style={{
-        background: "var(--bg-card)", border: "1px solid var(--border)",
-        borderRadius: "12px", overflow: "hidden",
-      }}>
-        {/* Table header */}
-        <div style={{
-          display: "grid", gridTemplateColumns: "40px 1fr 160px",
-          padding: "10px 16px",
-          borderBottom: "1px solid var(--border)",
-          fontSize: "11px", fontWeight: 600, color: "var(--text-muted)",
-          textTransform: "uppercase", letterSpacing: "0.06em",
-          background: "var(--bg-secondary)",
-        }}>
-          <div>
-            <input type="checkbox"
-              checked={selected.size === chunks.length && chunks.length > 0}
-              onChange={toggleAll}
-              style={{ cursor: "pointer", accentColor: "var(--accent)" }}
-            />
+      {/* ── Filter / Search Bar ── */}
+      <Card className="border-slate-200/80 shadow-2xs">
+        <CardContent className="p-3">
+          <div className="flex items-center gap-3">
+            <div className="relative flex-1">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search knowledge corpus by keywords…"
+                className="pl-9 pr-8 h-9 text-xs md:text-sm bg-slate-50/50 border-slate-200"
+              />
+              {search && (
+                <button
+                  onClick={() => setSearch("")}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => loadChunks()}
+              title="Refresh table"
+              className="h-9 px-3"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+            </Button>
           </div>
-          <div>Chunk Text</div>
-          <div>Actions</div>
-        </div>
+        </CardContent>
+      </Card>
 
-        {/* Rows */}
-        {loading ? (
-          <div style={{ padding: "40px", textAlign: "center", color: "var(--text-muted)" }}>Loading…</div>
-        ) : chunks.length === 0 ? (
-          <div style={{ padding: "40px", textAlign: "center", color: "var(--text-muted)" }}>
-            {debouncedSearch ? "No chunks match your search." : "No chunks yet. Add your first chunk!"}
-          </div>
-        ) : (
-          chunks.map((chunk, i) => (
-            <div key={chunk.id} style={{
-              display: "grid", gridTemplateColumns: "40px 1fr 160px",
-              padding: "12px 16px",
-              borderBottom: i < chunks.length - 1 ? "1px solid var(--border)" : "none",
-              alignItems: "flex-start",
-              background: selected.has(chunk.id) ? "var(--accent-muted)" : "transparent",
-              transition: "background 0.1s",
-            }}>
-              {/* Checkbox */}
-              <div style={{ paddingTop: "2px" }}>
-                <input type="checkbox"
-                  checked={selected.has(chunk.id)}
-                  onChange={() => toggleSelect(chunk.id)}
-                  style={{ cursor: "pointer", accentColor: "var(--accent)" }}
-                />
-              </div>
+      {/* ── Data Table ── */}
+      <Card className="border-slate-200/80 shadow-2xs overflow-hidden">
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader>
+              <TableRow className="hover:bg-slate-50/70">
+                <TableHead className="w-10 pl-4">
+                  <input
+                    type="checkbox"
+                    checked={chunks.length > 0 && selected.size === chunks.length}
+                    onChange={toggleAll}
+                    className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                  />
+                </TableHead>
+                <TableHead className="w-36">ID</TableHead>
+                <TableHead>Content</TableHead>
+                <TableHead className="w-24 text-center">Chars</TableHead>
+                <TableHead className="w-28 text-right pr-6">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {loading && chunks.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-40 text-center text-slate-400 text-xs">
+                    <RefreshCw className="w-5 h-5 animate-spin mx-auto mb-2 text-indigo-500" />
+                    Loading knowledge chunks…
+                  </TableCell>
+                </TableRow>
+              ) : chunks.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="h-48 text-center text-slate-400">
+                    <AlertCircle className="w-8 h-8 mx-auto mb-2 text-slate-300" />
+                    <div className="text-sm font-semibold text-slate-700">
+                      No chunks found
+                    </div>
+                    <div className="text-xs text-slate-400 mt-1">
+                      {search ? "Try adjusting your search query." : "Start by adding your first knowledge chunk."}
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                chunks.map((chunk) => {
+                  const isSelected = selected.has(chunk.id);
+                  const isEditing = editingId === chunk.id;
+                  const isDeleting = deleteConfirm === chunk.id;
 
-              {/* Text or Edit textarea */}
+                  return (
+                    <TableRow
+                      key={chunk.id}
+                      className={isSelected ? "bg-indigo-50/40" : ""}
+                    >
+                      {/* Checkbox */}
+                      <TableCell className="pl-4">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => toggleSelect(chunk.id)}
+                          className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                        />
+                      </TableCell>
+
+                      {/* ID with Copy */}
+                      <TableCell className="font-mono text-xs text-slate-500">
+                        <div className="flex items-center gap-1.5">
+                          <span className="truncate max-w-[90px]" title={chunk.id}>
+                            {chunk.id.slice(0, 10)}…
+                          </span>
+                          <button
+                            onClick={() => copyToClipboard(chunk.id)}
+                            className="text-slate-400 hover:text-slate-700 p-0.5 rounded transition-colors"
+                            title="Copy ID"
+                          >
+                            {copiedId === chunk.id ? (
+                              <Check className="w-3 h-3 text-emerald-600" />
+                            ) : (
+                              <Copy className="w-3 h-3" />
+                            )}
+                          </button>
+                        </div>
+                      </TableCell>
+
+                      {/* Content or Edit Form */}
+                      <TableCell>
+                        {isEditing ? (
+                          <div className="space-y-2 py-1">
+                            <Textarea
+                              value={editText}
+                              onChange={(e) => setEditText(e.target.value)}
+                              rows={3}
+                              className="text-xs leading-relaxed"
+                            />
+                            <div className="flex items-center gap-2">
+                              <Button
+                                size="sm"
+                                onClick={saveEdit}
+                                disabled={saving}
+                                className="h-7 text-xs bg-indigo-600 hover:bg-indigo-700"
+                              >
+                                {saving ? "Saving…" : "Save Changes"}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setEditingId(null)}
+                                className="h-7 text-xs"
+                              >
+                                Cancel
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-xs md:text-sm text-slate-800 leading-relaxed max-w-2xl">
+                            {chunk.text}
+                          </div>
+                        )}
+                      </TableCell>
+
+                      {/* Char Count */}
+                      <TableCell className="text-center">
+                        <Badge variant="secondary" className="text-[10px] font-mono">
+                          {chunk.text.length}
+                        </Badge>
+                      </TableCell>
+
+                      {/* Actions */}
+                      <TableCell className="text-right pr-6">
+                        {isDeleting ? (
+                          <div className="flex items-center justify-end gap-1.5">
+                            <span className="text-[11px] text-red-600 font-medium mr-1">
+                              Delete?
+                            </span>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => confirmDelete(chunk.id)}
+                              className="h-7 px-2 text-xs"
+                            >
+                              Yes
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setDeleteConfirm(null)}
+                              className="h-7 px-2 text-xs"
+                            >
+                              No
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-end gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => startEdit(chunk)}
+                              className="h-7 w-7 text-slate-400 hover:text-slate-700 hover:bg-slate-100"
+                              title="Edit chunk"
+                            >
+                              <Edit2 className="w-3.5 h-3.5" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setDeleteConfirm(chunk.id)}
+                              className="h-7 w-7 text-slate-400 hover:text-red-600 hover:bg-red-50"
+                              title="Delete chunk"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </Button>
+                          </div>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+              )}
+            </TableBody>
+          </Table>
+
+          {/* ── Pagination Footer ── */}
+          {meta && meta.totalPages > 1 && (
+            <div className="flex items-center justify-between px-6 py-3 border-t border-slate-100 bg-slate-50/50 text-xs text-slate-500">
               <div>
-                {editingId === chunk.id ? (
-                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                    <textarea
-                      value={editText}
-                      onChange={(e) => setEditText(e.target.value)}
-                      rows={3}
-                      style={{
-                        width: "100%", background: "var(--bg-secondary)",
-                        border: "1px solid var(--accent)", borderRadius: "6px",
-                        padding: "8px 10px", color: "var(--text-primary)", fontSize: "13px",
-                        resize: "vertical", outline: "none", fontFamily: "inherit",
-                      }}
-                    />
-                    <div style={{ display: "flex", gap: "6px" }}>
-                      <button onClick={saveEdit} disabled={saving} style={{
-                        padding: "5px 12px", borderRadius: "6px", fontSize: "12px", fontWeight: 600,
-                        background: "var(--success-muted)", border: "1px solid var(--success)", color: "var(--success)", cursor: "pointer",
-                      }}>{saving ? "Saving…" : "Save"}</button>
-                      <button onClick={() => setEditingId(null)} style={{
-                        padding: "5px 12px", borderRadius: "6px", fontSize: "12px",
-                        background: "transparent", border: "1px solid var(--border)", color: "var(--text-secondary)", cursor: "pointer",
-                      }}>Cancel</button>
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    <p style={{ color: "var(--text-primary)", fontSize: "13px", lineHeight: 1.6, margin: 0 }}>
-                      {chunk.text}
-                    </p>
-                    <div style={{ marginTop: "6px" }}>
-                      <Badge color="var(--text-muted)">{chunk.id}</Badge>
-                    </div>
-                  </div>
-                )}
+                Page <span className="font-semibold text-slate-700">{meta.page}</span> of{" "}
+                <span className="font-semibold text-slate-700">{meta.totalPages}</span>
               </div>
-
-              {/* Actions */}
-              <div style={{ display: "flex", gap: "6px", justifyContent: "flex-end", flexWrap: "wrap" }}>
-                {deleteConfirm === chunk.id ? (
-                  <>
-                    <button onClick={() => confirmDelete(chunk.id)} style={{
-                      padding: "5px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: 600,
-                      background: "var(--danger)", border: "none", color: "#fff", cursor: "pointer",
-                    }}>Confirm</button>
-                    <button onClick={() => setDeleteConfirm(null)} style={{
-                      padding: "5px 10px", borderRadius: "6px", fontSize: "11px",
-                      background: "transparent", border: "1px solid var(--border)", color: "var(--text-secondary)", cursor: "pointer",
-                    }}>Cancel</button>
-                  </>
-                ) : (
-                  <>
-                    <button onClick={() => startEdit(chunk)} style={{
-                      padding: "5px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: 500,
-                      background: "var(--bg-secondary)", border: "1px solid var(--border)", color: "var(--text-secondary)", cursor: "pointer",
-                    }}>Edit</button>
-                    <button onClick={() => setDeleteConfirm(chunk.id)} style={{
-                      padding: "5px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: 500,
-                      background: "var(--danger-muted)", border: "1px solid var(--danger)", color: "var(--danger)", cursor: "pointer",
-                    }}>Delete</button>
-                  </>
-                )}
+              <div className="flex items-center gap-1.5">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.max(p - 1, 1))}
+                  disabled={page <= 1 || loading}
+                  className="h-7 px-2 text-xs"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5 mr-0.5" /> Previous
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.min(p + 1, meta.totalPages))}
+                  disabled={page >= meta.totalPages || loading}
+                  className="h-7 px-2 text-xs"
+                >
+                  Next <ChevronRight className="w-3.5 h-3.5 ml-0.5" />
+                </Button>
               </div>
             </div>
-          ))
-        )}
-      </div>
-
-      {/* Pagination */}
-      {meta && meta.totalPages > 1 && (
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "8px", marginTop: "20px" }}>
-          <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} style={{
-            padding: "6px 14px", borderRadius: "7px", fontSize: "13px",
-            background: "var(--bg-card)", border: "1px solid var(--border)", color: page === 1 ? "var(--text-muted)" : "var(--text-primary)",
-            cursor: page === 1 ? "not-allowed" : "pointer",
-          }}>← Prev</button>
-
-          <span style={{ color: "var(--text-secondary)", fontSize: "13px" }}>
-            Page {meta.page} of {meta.totalPages}
-          </span>
-
-          <button onClick={() => setPage(p => Math.min(meta.totalPages, p + 1))} disabled={page === meta.totalPages} style={{
-            padding: "6px 14px", borderRadius: "7px", fontSize: "13px",
-            background: "var(--bg-card)", border: "1px solid var(--border)", color: page === meta.totalPages ? "var(--text-muted)" : "var(--text-primary)",
-            cursor: page === meta.totalPages ? "not-allowed" : "pointer",
-          }}>Next →</button>
-        </div>
-      )}
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

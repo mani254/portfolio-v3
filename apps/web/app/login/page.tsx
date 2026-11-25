@@ -1,15 +1,20 @@
 'use client';
 
+import { Suspense } from 'react';
 import { LoginForm } from '@/components/auth/login-form';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import { useSearchParams } from 'next/navigation';
 
-export default function LoginPage() {
+function LoginContent() {
     const searchParams = useSearchParams();
     const redirectUrl = searchParams.get('redirect') || '/';
 
+    return <LoginForm redirectUrl={redirectUrl} />;
+}
+
+export default function LoginPage() {
     return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden">
             {/* Background Decorations */}
@@ -33,7 +38,13 @@ export default function LoginPage() {
                 </Link>
 
                 <div className="pt-4">
-                    <LoginForm redirectUrl={redirectUrl} />
+                    <Suspense fallback={
+                        <div className="flex items-center justify-center py-12">
+                            <Loader2 className="w-6 h-6 text-primary animate-spin" />
+                        </div>
+                    }>
+                        <LoginContent />
+                    </Suspense>
                 </div>
             </motion.div>
         </div>

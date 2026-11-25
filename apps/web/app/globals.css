@@ -1,91 +1,67 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:is(.dark *));
-
 @theme {
   --font-inter: var(--font-inter);
-  --font-quicksand: var(--font-quicksand);
+  --font-plus-jakarta-sans: var(--font-plus-jakarta-sans);
 }
 
+/* ─── Light-Only Design Tokens ─────────────────────────────────────────────── */
 :root {
-  /* Base surfaces */
-  --background: 0 0% 98%;
-  --foreground: 240 6% 22%;
+  color-scheme: light;
 
-  --card: 0 0% 99%;
-  --card-foreground: 240 6% 22%;
+  /* Core surfaces */
+  --background: 42 30% 97%; /* #f9f8f4 warm white */
+  --foreground: 22 18% 12%; /* #1e1a16 warm near-black */
 
-  --popover: 0 0% 99%;
-  --popover-foreground: 240 6% 22%;
+  --sidebar: 42 22% 93%; /* #ede9e2 cream sidebar */
+
+  --card: 0 0% 100%;
+  --card-foreground: 22 18% 12%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 22 18% 12%;
 
   /* Primary */
-  --primary: 262 83% 58%;
-  --primary-foreground: 210 20% 98%;
+  --primary: 22 18% 12%; /* same as foreground — dark */
+  --primary-foreground: 42 30% 97%;
 
   /* Surfaces */
-  --secondary: 240 6% 93%;
-  --secondary-foreground: 240 6% 24%;
+  --secondary: 42 18% 91%;
+  --secondary-foreground: 22 12% 22%;
 
-  --muted: 240 6% 93%;
-  --muted-foreground: 240 7% 30%;
+  --muted: 42 18% 91%;
+  --muted-foreground: 22 8% 48%;
 
-  --accent: 240 6% 93%;
-  --accent-foreground: 240 6% 24%;
+  --accent: 42 18% 91%;
+  --accent-foreground: 22 18% 12%;
 
   /* Status */
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
 
   /* Borders */
-  --border: 240 6% 88%;
-  --input: 240 6% 88%;
+  --border: 38 16% 87%;
+  --input: 38 16% 87%;
 
   /* Focus */
-  --ring: 262 83% 58%;
+  --ring: 22 18% 12%;
 
+  /* Radius */
   --radius: 0.75rem;
+
+  /* ── Hero highlight pills ── */
+  --highlight-green: 95 62% 82%; /* soft lime #c6f096 */
+  --highlight-coral: 14 82% 87%; /* soft peach-coral #f8c4ad */
+
+  /* ── Sidebar width ── */
+  --sidebar-width: 240px;
 }
 
-.dark {
-  /* Base surfaces */
-  --background: 240 8% 6%;
-  --foreground: 240 5% 84%;
-
-  --card: 240 8% 7%;
-  --card-foreground: 240 5% 84%;
-
-  --popover: 240 8% 7%;
-  --popover-foreground: 240 5% 84%;
-
-  /* Primary */
-  --primary: 217 91% 60%;
-  --primary-foreground: 222 47% 11%;
-
-  /* Surfaces */
-  --secondary: 240 4% 18%;
-  --secondary-foreground: 240 5% 84%;
-
-  --muted: 240 4% 18%;
-  --muted-foreground: 240 6% 72%;
-
-  --accent: 240 4% 18%;
-  --accent-foreground: 240 5% 84%;
-
-  /* Status */
-  --destructive: 0 63% 35%;
-  --destructive-foreground: 0 0% 98%;
-
-  /* Borders */
-  --border: 240 4% 20%;
-  --input: 240 4% 20%;
-
-  /* Focus */
-  --ring: 217 91% 60%;
-}
-
+/* ─── Tailwind Color Mapping ───────────────────────────────────────────────── */
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
+  --color-sidebar: hsl(var(--sidebar));
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
   --color-popover: hsl(var(--popover));
@@ -103,28 +79,71 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
-
-  --text-sm: 16px;
-  --text-xs: 14px;
+  --color-highlight-green: hsl(var(--highlight-green));
+  --color-highlight-coral: hsl(var(--highlight-coral));
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* ── Animations ── */
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
   --animate-gradient-x: gradient-x 3s ease infinite;
   --animate-chat-thinking: chat-thinking-bounce 1.2s ease-in-out infinite;
+  --animate-fade-up: fade-up 0.6s ease-out forwards;
+  --animate-ambient-1: ambient-drift-1 18s ease-in-out infinite alternate;
+  --animate-ambient-2: ambient-drift-2 24s ease-in-out infinite alternate;
+
+  @keyframes ambient-drift-1 {
+    0% {
+      transform: translate(0px, 0px) scale(1);
+      opacity: 0.35;
+    }
+    50% {
+      transform: translate(40px, 25px) scale(1.08);
+      opacity: 0.55;
+    }
+    100% {
+      transform: translate(-20px, 35px) scale(0.96);
+      opacity: 0.38;
+    }
+  }
+
+  @keyframes ambient-drift-2 {
+    0% {
+      transform: translate(0px, 0px) scale(1);
+      opacity: 0.3;
+    }
+    50% {
+      transform: translate(-35px, -20px) scale(1.1);
+      opacity: 0.5;
+    }
+    100% {
+      transform: translate(25px, -30px) scale(0.95);
+      opacity: 0.32;
+    }
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
   @keyframes chat-thinking-bounce {
-
     0%,
     80%,
     100% {
       transform: translateY(0);
       opacity: 0.4;
     }
-
     40% {
       transform: translateY(-4px);
       opacity: 1;
@@ -135,11 +154,9 @@
     0% {
       background-position: 0% 50%;
     }
-
     50% {
       background-position: 100% 50%;
     }
-
     100% {
       background-position: 0% 50%;
     }
@@ -149,7 +166,6 @@
     from {
       height: 0;
     }
-
     to {
       height: var(--radix-accordion-content-height);
     }
@@ -159,13 +175,13 @@
     from {
       height: var(--radix-accordion-content-height);
     }
-
     to {
       height: 0;
     }
   }
 }
 
+/* ─── Base ─────────────────────────────────────────────────────────────────── */
 * {
   border-color: var(--color-border);
 }
@@ -174,7 +190,6 @@ body {
   background-color: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-inter), system-ui, sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1,
@@ -182,15 +197,22 @@ h2,
 h3,
 h4,
 h5,
-h6 {
-  font-family: var(--font-quicksand), system-ui, sans-serif;
+h6,
+.font-heading {
+  font-family: var(--font-plus-jakarta-sans), system-ui, sans-serif;
 }
 
-p {
+p,
+span,
+a,
+button,
+input,
+textarea,
+select {
   font-family: var(--font-inter), system-ui, sans-serif;
 }
 
-/* Lenis Smooth Scroll */
+/* ─── Lenis Smooth Scroll ───────────────────────────────────────────────────── */
 html.lenis,
 html.lenis body {
   height: auto;
@@ -212,87 +234,67 @@ html.lenis body {
   pointer-events: none;
 }
 
-@layer components {
-  h1 {
-    @apply text-foreground text-2xl md:text-4xl font-bold
-  }
-
-  h2 {
-    @apply text-foreground text-xl md:text-2xl font-bold
-  }
-
-  h3 {
-    @apply text-foreground text-lg md:text-xl font-bold
-  }
-
-  h4 {
-    @apply text-foreground text-base md:text-lg font-bold
-  }
-
-  h5 {
-    @apply text-foreground text-sm md:text-base font-bold
-  }
-
-  h6 {
-    @apply text-foreground text-xs md:text-sm font-bold
-  }
-
-  .section-heading {
-    @apply mb-4
-  }
-}
-
+/* ─── Layout Utilities ──────────────────────────────────────────────────────── */
 .container {
-  @apply mx-auto max-w-7xl px-4 md:px-6
+  @apply mx-auto max-w-7xl px-4 md:px-8;
 }
 
 section {
-  @apply py-8 md:py-12
+  @apply py-10 md:py-16;
 }
 
-.page-section, footer {
-  @apply py-12 md:py-18
+.page-section {
+  @apply py-14 md:py-20;
 }
 
+.unique-section {
+  @apply px-4 sm:px-6 md:px-10 lg:px-14 pt-4 sm:pt-6 md:pt-8 pb-14 md:pb-20;
+}
 
+/* ─── Heading Scale ─────────────────────────────────────────────────────────── */
+@layer components {
+  h1 {
+    @apply text-foreground text-2xl sm:text-3xl md:text-[34px] font-semibold tracking-tight;
+  }
+  h2 {
+    @apply text-foreground text-xl sm:text-2xl md:text-[26px] font-semibold tracking-tight;
+  }
+  h3 {
+    @apply text-foreground text-lg sm:text-xl md:text-2xl font-semibold tracking-tight;
+  }
+  h4 {
+    @apply text-foreground text-sm sm:text-base md:text-lg font-medium tracking-tight;
+  }
+  h5 {
+    @apply text-foreground text-xs sm:text-sm font-medium;
+  }
+  h6 {
+    @apply text-foreground text-[11px] sm:text-xs font-medium uppercase tracking-wider;
+  }
+
+  .section-heading {
+    @apply mb-5;
+  }
+}
+
+/* ─── Custom Utilities ──────────────────────────────────────────────────────── */
 @layer utilities {
+  /* Scrollbar hide */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
-
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
 
-  .flex-list-button {
-    @apply cursor-pointer px-6 py-2.5 rounded-full border text-sm font-medium transition-all duration-300;
-    white-space: nowrap;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-    position: relative;
+  /* Mobile menu clip-path initial state */
+  .mobile-menu {
+    clip-path: circle(0px at 100% 0px);
+    will-change: clip-path;
   }
 
-  .flex-list-button:active {
-    transform: scale(0.8);
-  }
-
-  .flex-list-button span {
-    position: relative;
-    z-index: 2;
-  }
-
-  .flex-list-button::before {
-    @apply bg-foreground/90 rounded-full absolute left-0 bottom-0 h-0 w-full;
-    content: "";
-    transition: all 0.4s ease-in-out;
-  }
-
-  .flex-list-button:hover::before {
-    height: 100%;
-    top: 0;
-  }
-
+  /* Phone input */
   .phone-input-custom {
     display: flex !important;
     align-items: center !important;
@@ -327,13 +329,32 @@ section {
     color: hsl(var(--foreground)) !important;
   }
 
-  .phoneInputInput:focus {
-    outline: none !important;
+  /* Flex list button */
+  .flex-list-button {
+    @apply cursor-pointer px-6 py-2.5 rounded-full border text-sm font-medium transition-all duration-300;
+    white-space: nowrap;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    position: relative;
   }
 
-  .mobile-menu {
-    clip-path: circle(5px at 100% 0);
-    will-change: clip-path;
+  .flex-list-button:active {
+    transform: scale(0.8);
   }
 
+  .flex-list-button span {
+    position: relative;
+    z-index: 2;
+  }
+
+  .flex-list-button::before {
+    @apply bg-foreground/90 rounded-full absolute left-0 bottom-0 h-0 w-full;
+    content: "";
+    transition: all 0.4s ease-in-out;
+  }
+
+  .flex-list-button:hover::before {
+    height: 100%;
+    top: 0;
+  }
 }

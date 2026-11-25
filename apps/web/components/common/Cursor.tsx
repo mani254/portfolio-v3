@@ -49,26 +49,36 @@ function Cursor() {
   }, [updateCursorStyles]);
 
   useEffect(() => {
-    if (isMobile) return
+    if (isMobile) return;
 
     document.addEventListener("mousemove", handleMouseMove);
 
-    const hoverLinks = document.querySelectorAll(".hover-link");
-    hoverLinks.forEach((el) => {
-      el.addEventListener("mouseenter", handleLinkCursorEnter);
-      el.addEventListener("mouseleave", handleLinkCursorLeave);
-    });
+    const handleMouseOver = (event: MouseEvent) => {
+      const target = (event.target as HTMLElement)?.closest(".hover-link");
+      if (target) {
+        handleLinkCursorEnter();
+      }
+    };
+
+    const handleMouseOut = (event: MouseEvent) => {
+      const target = (event.target as HTMLElement)?.closest(".hover-link");
+      if (target) {
+        const related = event.relatedTarget as HTMLElement | null;
+        if (!related || !target.contains(related)) {
+          handleLinkCursorLeave();
+        }
+      }
+    };
+
+    document.addEventListener("mouseover", handleMouseOver);
+    document.addEventListener("mouseout", handleMouseOut);
 
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
-      hoverLinks.forEach((el) => {
-        el.removeEventListener("mouseenter", handleLinkCursorEnter);
-        el.removeEventListener("mouseleave", handleLinkCursorLeave);
-      });
+      document.removeEventListener("mouseover", handleMouseOver);
+      document.removeEventListener("mouseout", handleMouseOut);
     };
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMobile])
+  }, [isMobile, handleMouseMove, handleLinkCursorEnter, handleLinkCursorLeave]);
 
   return (
     <div

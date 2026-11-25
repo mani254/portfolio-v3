@@ -26,6 +26,7 @@ export interface SanityProject {
   _id: string;
   title: string;
   slug: string;
+  priority?: number;
   liveUrl?: string;
   githubUrl?: string;
   overview?: string;
@@ -64,6 +65,7 @@ export interface Project {
   id: string;
   title: string;
   slug: string;
+  priority?: number;
   liveUrl?: string;
   githubUrl?: string;
   overview?: string;
@@ -138,11 +140,36 @@ export interface Education {
 export interface SanityBlogCategory {
   _id: string;
   title: string;
+  slug?: string;
 }
 
 export interface BlogCategory {
   id: string;
   title: string;
+  slug?: string;
+}
+
+export interface BlogSeries {
+  title?: string;
+  part?: number;
+}
+
+export interface SanityBlogRef {
+  _id: string;
+  title: string;
+  slug: string;
+  readTime?: string;
+  mainImage?: any;
+  overview?: string;
+}
+
+export interface BlogRef {
+  id: string;
+  title: string;
+  slug: string;
+  readTime?: string;
+  mainImage?: string;
+  overview?: string;
 }
 
 export interface SanityBlogSection {
@@ -156,11 +183,19 @@ export interface SanityBlog {
   slug: string;
   readTime: string;
   author: string;
+  publishedAt?: string;
+  isFeatured?: boolean;
   mainImage?: {
     asset: { _ref: string; _type: "reference" };
     alt?: string;
   } | null;
+  category?: SanityBlogCategory;
   categories?: SanityBlogCategory[];
+  tags?: string[];
+  series?: BlogSeries;
+  previousPost?: SanityBlogRef;
+  nextPost?: SanityBlogRef;
+  relatedPosts?: SanityBlogRef[];
   overview?: string;
   keywords?: string[];
   sections?: SanityBlogSection[];
@@ -172,9 +207,17 @@ export interface Blog {
   slug: string;
   readTime: string;
   author: string;
+  publishedAt?: string;
+  isFeatured?: boolean;
   mainImage?: string;
   mainImageAlt?: string;
+  category?: BlogCategory;
   categories?: BlogCategory[];
+  tags?: string[];
+  series?: BlogSeries;
+  previousPost?: BlogRef;
+  nextPost?: BlogRef;
+  relatedPosts?: BlogRef[];
   overview?: string;
   keywords?: string[];
   sections?: SanityBlogSection[];

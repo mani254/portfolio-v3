@@ -11,7 +11,7 @@ interface Props {
   isMobile?: boolean
 }
 
-export default function ProjectContent({ project, index, isMobile }: Props) {
+export default function ProjectContent({ project, index: _index, isMobile }: Props) {
 
   const features =
     project.keyFeatures?.map((f) => f.question).slice(0, 3) ?? []
@@ -30,7 +30,7 @@ export default function ProjectContent({ project, index, isMobile }: Props) {
             href={`/projects/${project.slug}`}
             className={cn(
               "group/link flex items-center gap-2 px-4 py-2 rounded-full border border-border/50",
-              "bg-white/40 backdrop-blur-md dark:bg-white/5 dark:hover:bg-white/10",
+              "bg-white/60 backdrop-blur-md",
               "transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
             )}
           >
@@ -67,13 +67,13 @@ export default function ProjectContent({ project, index, isMobile }: Props) {
                 key={tech.id}
                 className={cn(
                   "flex items-center gap-2.5 px-3 py-1 border border-border/50 rounded-full shadow-sm",
-                  "bg-white/40 backdrop-blur-md dark:bg-white/5 dark:hover:bg-white/10 transition-all duration-300",
+                  "bg-white/60 backdrop-blur-md transition-all duration-300",
                   "hover:shadow-lg hover:-translate-y-0.5"
                 )}
               >
                 {tech.image && (
                   <div className="w-5 h-5 relative shrink-0 rounded-full overflow-hidden brightness-110">
-                    <Image unoptimized src={tech.image} alt={tech.title} fill className={cn("object-contain", tech.isBlack && 'dark:invert')} />
+                    <Image unoptimized src={tech.image} alt={`${tech.title} technology logo`} fill className="object-contain" />
                   </div>
                 )}
                 <span className="text-[12px] font-medium tracking-wide text-foreground/90">{tech.title}</span>

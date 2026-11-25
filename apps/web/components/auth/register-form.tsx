@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UserPlus, Mail, ArrowLeft } from 'lucide-react';
+import { Mail, ArrowLeft } from 'lucide-react';
 
 interface RegisterFormProps {
     redirectUrl?: string;
@@ -18,7 +18,7 @@ interface RegisterFormProps {
     isModal?: boolean;
 }
 
-export const RegisterForm = ({ redirectUrl, onSuccess, onToggleLogin, isModal = false }: RegisterFormProps) => {
+export const RegisterForm = ({ redirectUrl, onSuccess, onToggleLogin, isModal: _isModal = false }: RegisterFormProps) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -269,7 +269,7 @@ export const RegisterForm = ({ redirectUrl, onSuccess, onToggleLogin, isModal = 
                             )}
 
                             <p className="text-center text-xs text-muted-foreground">
-                                Didn't receive the code?{' '}
+                                Didn&apos;t receive the code?{' '}
                                 <button
                                     onClick={() => resendOtp(email)}
                                     className="font-bold text-primary hover:text-primary/80 transition-colors"

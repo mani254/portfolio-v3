@@ -1,17 +1,20 @@
 import { create } from 'zustand';
-import { AuthUser, AuthActions } from './types';
-import { useUserStore } from './userStore';
 import api from '@/lib/api';
+import { useUserStore } from './userStore';
+import { AuthState, AuthUser } from './types';
 import { AxiosError } from 'axios';
 
-export const useAuthStore = create<AuthActions>(() => ({
+interface ApiErrorPayload {
+  message?: string;
+  data?: unknown;
+}
+
+export const useAuthStore = create<AuthState>(() => ({
   login: async (email, password) => {
     useUserStore.getState().setLoading(true);
     try {
       const response = await api.post('/api/auth/login', { email, password });
-      const data = response.data;
-      const user = data.data as AuthUser;
-      
+      const user = response.data.data as AuthUser;
       useUserStore.getState().setUser(user);
       // Store userId as sessionId for persistent chat
       localStorage.setItem('portfolio_chat_session_id', user._id);
@@ -20,7 +23,7 @@ export const useAuthStore = create<AuthActions>(() => ({
       return { ok: true, user };
     } catch (error) {
       useUserStore.getState().setLoading(false);
-      const axiosError = error as AxiosError<any>;
+      const axiosError = error as AxiosError<ApiErrorPayload>;
       return { 
         ok: false, 
         status: axiosError.response?.status, 
@@ -45,7 +48,7 @@ export const useAuthStore = create<AuthActions>(() => ({
       return { ok: true, message: data.message, data: data.data };
     } catch (error) {
       useUserStore.getState().setLoading(false);
-      const axiosError = error as AxiosError<any>;
+      const axiosError = error as AxiosError<ApiErrorPayload>;
       return { 
         ok: false, 
         message: axiosError.response?.data?.message || 'Registration failed',
@@ -58,10 +61,10 @@ export const useAuthStore = create<AuthActions>(() => ({
     try {
       await api.post('/api/auth/logout');
     } catch (error) {
-      console.error('Logout request failed:', error);
+      console.error('Logout error:', error);
     } finally {
       useUserStore.getState().clearUser();
-      // Optional: regenerate a new anonymous session ID for privacy
+      // Generate a new anonymous sessionId on logout
       const newAnonId = `anon_${crypto.randomUUID()}`;
       localStorage.setItem('portfolio_chat_session_id', newAnonId);
     }
@@ -73,7 +76,7 @@ export const useAuthStore = create<AuthActions>(() => ({
       const data = response.data;
       return { ok: true, message: data.message, verified: data.data?.verified };
     } catch (error) {
-      const axiosError = error as AxiosError<any>;
+      const axiosError = error as AxiosError<ApiErrorPayload>;
       return { 
         ok: false, 
         message: axiosError.response?.data?.message || 'Verification failed',
@@ -88,7 +91,7 @@ export const useAuthStore = create<AuthActions>(() => ({
       const data = response.data;
       return { ok: true, message: data.message };
     } catch (error) {
-      const axiosError = error as AxiosError<any>;
+      const axiosError = error as AxiosError<ApiErrorPayload>;
       return { 
         ok: false, 
         message: axiosError.response?.data?.message || 'Failed to resend code' 

@@ -76,13 +76,13 @@ export default function ChatWidget() {
                             onClick={open ? handleClose : handleOpen}
                             aria-label={open ? 'Close chat' : 'Open chat'}
                             className="
-                                w-14 h-14 rounded-full shadow-lg
+                                w-11 h-11 rounded-full shadow-md
                                 bg-primary text-primary-foreground
                                 flex items-center justify-center
-                                hover:scale-110 active:scale-95
+                                hover:scale-105 active:scale-95
                                 transition-transform duration-200
                                 cursor-pointer
-                                ring-4 ring-primary/20
+                                ring-2 ring-primary/15
                             "
                         >
                             <AnimatePresence mode="wait" initial={false}>
@@ -94,7 +94,7 @@ export default function ChatWidget() {
                                         exit={{ rotate: 90, opacity: 0 }}
                                         transition={{ duration: 0.15 }}
                                     >
-                                        <X className="w-6 h-6" />
+                                        <X className="w-4.5 h-4.5" />
                                     </motion.span>
                                 ) : (
                                     <motion.span
@@ -104,7 +104,7 @@ export default function ChatWidget() {
                                         exit={{ rotate: -90, opacity: 0 }}
                                         transition={{ duration: 0.15 }}
                                     >
-                                        <MessageCircle className="w-6 h-6" />
+                                        <MessageCircle className="w-4.5 h-4.5" />
                                     </motion.span>
                                 )}
                             </AnimatePresence>
@@ -120,11 +120,11 @@ export default function ChatWidget() {
                                     transition={{ type: 'spring', stiffness: 500, damping: 25 }}
                                     className="
                                         absolute -top-1 -right-1
-                                        w-5 h-5 rounded-full
+                                        w-4 h-4 rounded-full
                                         bg-destructive text-destructive-foreground
-                                        text-[11px] font-bold
+                                        text-[10px] font-bold
                                         flex items-center justify-center
-                                        shadow-md
+                                        shadow-sm
                                         ring-2 ring-card
                                     "
                                 >

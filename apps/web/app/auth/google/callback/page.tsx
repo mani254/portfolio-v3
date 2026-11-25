@@ -1,13 +1,13 @@
 'use client';
 
+import { Suspense, useEffect, useState } from 'react';
 import { useUserStore } from '@/store/userStore';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const GoogleCallbackPage = () => {
+function GoogleCallbackContent() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
@@ -69,6 +69,46 @@ const GoogleCallbackPage = () => {
     }, [searchParams, router, getCurrentUser]);
 
     return (
+        <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-md p-8 rounded-3xl border border-border bg-card/50 backdrop-blur-sm shadow-2xl text-center flex flex-col items-center gap-6"
+        >
+            {loading ? (
+                <>
+                    <div className="relative">
+                        <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full" />
+                        <Loader2 className="h-12 w-12 text-primary animate-spin relative" />
+                    </div>
+                    <div className="space-y-2">
+                        <h1 className="text-xl font-bold tracking-tight">Authenticating</h1>
+                        <p className="text-sm text-muted-foreground">Completing your secure sign-in with Google...</p>
+                    </div>
+                </>
+            ) : error ? (
+                <>
+                    <div className="w-12 h-12 rounded-2xl bg-destructive/10 flex items-center justify-center text-destructive mb-2">
+                        <AlertCircle className="w-6 h-6" />
+                    </div>
+                    <div className="space-y-2">
+                        <h1 className="text-xl font-bold tracking-tight">Authentication Failed</h1>
+                        <p className="text-sm text-destructive font-medium bg-destructive/10 py-2 px-4 rounded-lg">{error}</p>
+                    </div>
+                    <Button 
+                        onClick={() => router.push('/login')}
+                        className="h-11 px-8 rounded-xl font-semibold transition-all group"
+                    >
+                        <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
+                        Return to Login
+                    </Button>
+                </>
+            ) : null}
+        </motion.div>
+    );
+}
+
+export default function GoogleCallbackPage() {
+    return (
         <div className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden">
             {/* Background Decorations */}
             <div className="absolute top-0 left-0 w-full h-full -z-10">
@@ -76,43 +116,14 @@ const GoogleCallbackPage = () => {
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-primary/5 rounded-full blur-[120px]" />
             </div>
 
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="w-full max-w-md p-8 rounded-3xl border border-border bg-card/50 backdrop-blur-sm shadow-2xl text-center flex flex-col items-center gap-6"
-            >
-                {loading ? (
-                    <>
-                        <div className="relative">
-                            <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full" />
-                            <Loader2 className="h-12 w-12 text-primary animate-spin relative" />
-                        </div>
-                        <div className="space-y-2">
-                            <h1 className="text-xl font-bold tracking-tight">Authenticating</h1>
-                            <p className="text-sm text-muted-foreground">Completing your secure sign-in with Google...</p>
-                        </div>
-                    </>
-                ) : error ? (
-                    <>
-                        <div className="w-12 h-12 rounded-2xl bg-destructive/10 flex items-center justify-center text-destructive mb-2">
-                            <AlertCircle className="w-6 h-6" />
-                        </div>
-                        <div className="space-y-2">
-                            <h1 className="text-xl font-bold tracking-tight">Authentication Failed</h1>
-                            <p className="text-sm text-destructive font-medium bg-destructive/10 py-2 px-4 rounded-lg">{error}</p>
-                        </div>
-                        <Button 
-                            onClick={() => router.push('/login')}
-                            className="h-11 px-8 rounded-xl font-semibold transition-all group"
-                        >
-                            <ArrowLeft className="w-4 h-4 mr-2 transition-transform group-hover:-translate-x-1" />
-                            Return to Login
-                        </Button>
-                    </>
-                ) : null}
-            </motion.div>
+            <Suspense fallback={
+                <div className="w-full max-w-md p-8 rounded-3xl border border-border bg-card/50 backdrop-blur-sm shadow-2xl text-center flex flex-col items-center gap-6">
+                    <Loader2 className="h-12 w-12 text-primary animate-spin" />
+                    <p className="text-sm text-muted-foreground">Loading authentication...</p>
+                </div>
+            }>
+                <GoogleCallbackContent />
+            </Suspense>
         </div>
     );
-};
-
-export default GoogleCallbackPage;
+}

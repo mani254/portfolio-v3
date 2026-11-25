@@ -1,17 +1,15 @@
 import BlogCard from "@/components/blogs/BlogCard";
 import BlogFilters from "@/components/blogs/BlogFilters";
 import Pagination from "@/components/blogs/Pagination";
-import CommonBanner from "@/components/common/CommonBanner";
 import CtaPro from "@/components/common/Cta";
 import SmoothScroll from "@/components/common/SmoothScroll";
 import { getBlogCategories, getPaginatedBlogs } from "sanity-lib";
 
-
-export const revalidate = 60; // Revalidate every minute instead of hour since blogs update often
+export const revalidate = 60;
 
 export const metadata = {
-  title: "Blogs | Portfolio",
-  description: "Read my latest articles and thoughts on software engineering.",
+  title: "Blog",
+  description: "Thoughts on software engineering, architecture, and the craft of building.",
 };
 
 interface BlogsPageProps {
@@ -33,21 +31,32 @@ export default async function BlogsPage({ searchParams }: BlogsPageProps) {
 
   return (
     <SmoothScroll>
-      <div>
-        <CommonBanner title="My Blog" />
+      <div className="pt-16 md:pt-0">
+        {/* Page header */}
+        <div className="px-4 sm:px-6 md:px-12 pt-6 sm:pt-8 md:pt-12 pb-6">
+          <p className="text-[11px] font-semibold text-muted-foreground tracking-[0.15em] uppercase mb-1.5">
+            Writing
+          </p>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground tracking-tight">
+            My Blog
+          </h1>
+        </div>
 
-        <div className="container mx-auto px-4 py-16 md:py-24">
+        <div className="px-4 sm:px-6 md:px-12 pb-16 md:pb-24">
           <div className="flex flex-col lg:flex-row gap-10">
-            {/* Left/Top side: Filters */}
-            <div className="lg:w-1/4 shrink-0">
-              <BlogFilters categories={categories} currentCategory={category} />
+            {/* Filters sidebar */}
+            <div className="lg:w-56 shrink-0">
+              <BlogFilters
+                categories={categories}
+                currentCategory={category}
+              />
             </div>
 
-            {/* Right/Bottom side: Blog List */}
-            <div className="lg:w-3/4 flex flex-col min-h-screen">
+            {/* Blog list */}
+            <div className="flex-1 flex flex-col min-h-[50vh]">
               {blogs.length > 0 ? (
                 <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
                     {blogs.map((blog) => (
                       <BlogCard key={blog.id} blog={blog} />
                     ))}
@@ -55,14 +64,22 @@ export default async function BlogsPage({ searchParams }: BlogsPageProps) {
 
                   {totalPages > 1 && (
                     <div className="mt-auto pt-8 border-t border-border">
-                      <Pagination currentPage={page} totalPages={totalPages} currentCategory={category} />
+                      <Pagination
+                        currentPage={page}
+                        totalPages={totalPages}
+                        currentCategory={category}
+                      />
                     </div>
                   )}
                 </>
               ) : (
-                <div className="flex flex-col items-center justify-center py-20 bg-muted/30 rounded-2xl border border-dashed border-border text-center">
-                  <h3 className="text-2xl font-bold mb-2 text-foreground">No blogs found</h3>
-                  <p className="text-muted-foreground">Try adjusting your filters to find what you&apos;re looking for.</p>
+                <div className="flex flex-col items-center justify-center py-24 rounded-2xl border border-dashed border-border text-center bg-muted/20">
+                  <h3 className="text-xl font-bold mb-2 text-foreground">
+                    No posts found
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Try adjusting your filters.
+                  </p>
                 </div>
               )}
             </div>

@@ -99,7 +99,7 @@ export default function ProjectCarousel({ images }: ProjectCarouselProps) {
         >
           <Image
             src={images[currentIndex].url}
-            alt={images[currentIndex].alt}
+            alt={images[currentIndex].alt || `Project showcase slide ${currentIndex + 1}`}
             fill
             className="object-cover pointer-events-none"
             sizes="(max-width: 1024px) 100vw, 75vw"

@@ -2,10 +2,11 @@ import { client } from "./client";
 import { getImageUrl, urlFor } from "./image";
 import type { Project, SanityProject, SanityTechnology, Technology } from "./types";
 
-export const ALL_PROJECTS_QUERY = `*[_type == "project"] | order(startDate desc) {
+export const ALL_PROJECTS_QUERY = `*[_type == "project"] | order(coalesce(priority, 999) asc, startDate desc) {
   _id,
   title,
   "slug": slug.current,
+  priority,
   overview,
   mainImage,
   keyFeatures,
@@ -16,13 +17,13 @@ export const ALL_PROJECTS_QUERY = `*[_type == "project"] | order(startDate desc)
     description,
     isBlack
   },
-
 }`;
 
 export const PROJECT_BY_SLUG_QUERY = `*[_type == "project" && slug.current == $slug][0] {
   _id,
   title,
   "slug": slug.current,
+  priority,
   liveUrl,
   githubUrl,
   overview,
@@ -72,6 +73,7 @@ function transformProject(sanityProject: SanityProject | null): Project | null {
     id: sanityProject._id,
     title: sanityProject.title,
     slug: sanityProject.slug,
+    priority: sanityProject.priority,
     liveUrl: sanityProject.liveUrl,
     githubUrl: sanityProject.githubUrl,
     overview: sanityProject.overview,
@@ -169,22 +171,44 @@ export const RESUME_QUERY = `*[_type == "resume"][0] {
 
 export const ALL_BLOG_CATEGORIES_QUERY = `*[_type == "blogCategory"] | order(title asc) {
   _id,
-  title
+  title,
+  "slug": slug.current
 }`;
 
 // PAGINATED AND FILTERED BLOGS
-export const PAGINATED_BLOGS_QUERY = `*[_type == "blog" && ($category == "" || $category in categories[]->title)] | order(_createdAt desc) [$start...$end] {
+export const PAGINATED_BLOGS_QUERY = `*[_type == "blog" && ($category == "" || $category in categories[]->title || category->title == $category || $category in categories[]->slug.current || category->slug.current == $category)] | order(coalesce(publishedAt, _createdAt) desc) [$start...$end] {
   _id,
   title,
   "slug": slug.current,
   readTime,
   author,
+  publishedAt,
+  isFeatured,
   mainImage,
   overview,
-  categories[]->{ _id, title }
+  tags,
+  series,
+  category->{ _id, title, "slug": slug.current },
+  categories[]->{ _id, title, "slug": slug.current }
 }`;
 
-export const TOTAL_BLOGS_QUERY = `count(*[_type == "blog" && ($category == "" || $category in categories[]->title)])`;
+export const TOTAL_BLOGS_QUERY = `count(*[_type == "blog" && ($category == "" || $category in categories[]->title || category->title == $category || $category in categories[]->slug.current || category->slug.current == $category)])`;
+
+export const ALL_BLOGS_QUERY = `*[_type == "blog"] | order(coalesce(publishedAt, _createdAt) desc) {
+  _id,
+  title,
+  "slug": slug.current,
+  readTime,
+  author,
+  publishedAt,
+  isFeatured,
+  mainImage,
+  overview,
+  tags,
+  series,
+  category->{ _id, title, "slug": slug.current },
+  categories[]->{ _id, title, "slug": slug.current }
+}`;
 
 export const BLOG_BY_SLUG_QUERY = `*[_type == "blog" && slug.current == $slug][0] {
   _id,
@@ -192,8 +216,37 @@ export const BLOG_BY_SLUG_QUERY = `*[_type == "blog" && slug.current == $slug][0
   "slug": slug.current,
   readTime,
   author,
+  publishedAt,
+  isFeatured,
   mainImage,
-  categories[]->{ _id, title },
+  category->{ _id, title, "slug": slug.current },
+  categories[]->{ _id, title, "slug": slug.current },
+  tags,
+  series,
+  previousPost->{
+    _id,
+    title,
+    "slug": slug.current,
+    readTime,
+    mainImage,
+    overview
+  },
+  nextPost->{
+    _id,
+    title,
+    "slug": slug.current,
+    readTime,
+    mainImage,
+    overview
+  },
+  relatedPosts[]->{
+    _id,
+    title,
+    "slug": slug.current,
+    readTime,
+    mainImage,
+    overview
+  },
   overview,
   keywords,
   sections
@@ -206,8 +259,21 @@ import type {
   Education, SanityEducation, 
   BlogCategory, SanityBlogCategory, 
   Blog, SanityBlog, 
+  BlogRef, SanityBlogRef,
   Resume, SanityResume 
 } from "./types";
+
+function mapBlogRef(ref?: SanityBlogRef): BlogRef | undefined {
+  if (!ref || !ref._id) return undefined;
+  return {
+    id: ref._id,
+    title: ref.title,
+    slug: ref.slug,
+    readTime: ref.readTime,
+    overview: ref.overview,
+    mainImage: ref.mainImage ? getImageUrl(ref.mainImage, 600) : undefined,
+  };
+}
 
 export async function getAllExperiences(): Promise<Experience[]> {
   try {
@@ -262,6 +328,28 @@ export async function getBlogCategories(): Promise<BlogCategory[]> {
   }
 }
 
+export async function getAllBlogs(): Promise<Blog[]> {
+  try {
+    const blogsData = await client.fetch<SanityBlog[]>(ALL_BLOGS_QUERY);
+    return blogsData.map(blog => ({
+      ...blog,
+      id: blog._id,
+      category: blog.category ? { id: blog.category._id, title: blog.category.title, slug: blog.category.slug } : undefined,
+      categories: blog.categories?.map((c: SanityBlogCategory) => ({ id: c._id, title: c.title, slug: c.slug })),
+      tags: blog.tags || [],
+      series: blog.series,
+      previousPost: mapBlogRef(blog.previousPost),
+      nextPost: mapBlogRef(blog.nextPost),
+      relatedPosts: blog.relatedPosts?.map(mapBlogRef).filter((p): p is BlogRef => Boolean(p)),
+      mainImage: blog.mainImage ? getImageUrl(blog.mainImage, 800) : undefined,
+      mainImageAlt: blog.mainImage?.alt || blog.title
+    }));
+  } catch (error) {
+    console.error("Error fetching all blogs:", error);
+    return [];
+  }
+}
+
 export async function getPaginatedBlogs(page: number, limit: number, category: string = ""): Promise<{ blogs: Blog[]; total: number }> {
   try {
     const start = (page - 1) * limit;
@@ -275,8 +363,14 @@ export async function getPaginatedBlogs(page: number, limit: number, category: s
     const blogs = blogsData.map(blog => ({
       ...blog,
       id: blog._id,
-      categories: blog.categories?.map((c: SanityBlogCategory) => ({ id: c._id, title: c.title })),
-      mainImage: blog.mainImage ? getImageUrl(blog.mainImage, 800) : undefined, // Use getImageUrl for bigger images
+      category: blog.category ? { id: blog.category._id, title: blog.category.title, slug: blog.category.slug } : undefined,
+      categories: blog.categories?.map((c: SanityBlogCategory) => ({ id: c._id, title: c.title, slug: c.slug })),
+      tags: blog.tags || [],
+      series: blog.series,
+      previousPost: mapBlogRef(blog.previousPost),
+      nextPost: mapBlogRef(blog.nextPost),
+      relatedPosts: blog.relatedPosts?.map(mapBlogRef).filter((p): p is BlogRef => Boolean(p)),
+      mainImage: blog.mainImage ? getImageUrl(blog.mainImage, 800) : undefined,
       mainImageAlt: blog.mainImage?.alt || blog.title
     }));
 
@@ -295,7 +389,13 @@ export async function getBlogBySlug(slug: string): Promise<Blog | null> {
     return {
       ...data,
       id: data._id,
-      categories: data.categories?.map((c: SanityBlogCategory) => ({ id: c._id, title: c.title })),
+      category: data.category ? { id: data.category._id, title: data.category.title, slug: data.category.slug } : undefined,
+      categories: data.categories?.map((c: SanityBlogCategory) => ({ id: c._id, title: c.title, slug: c.slug })),
+      tags: data.tags || [],
+      series: data.series,
+      previousPost: mapBlogRef(data.previousPost),
+      nextPost: mapBlogRef(data.nextPost),
+      relatedPosts: data.relatedPosts?.map(mapBlogRef).filter((p): p is BlogRef => Boolean(p)),
       mainImage: data.mainImage ? getImageUrl(data.mainImage, 1200) : undefined,
       mainImageAlt: data.mainImage?.alt || data.title
     };

@@ -22,7 +22,7 @@ export async function generateStaticParams() {
     }));
 
     if (isDev) {
-      console.log(`[generateStaticParams] Generated ${pages.length} project pages for static generation`);
+      console.info(`[generateStaticParams] Generated ${pages.length} project pages for static generation`);
     }
 
     return pages;
@@ -78,11 +78,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProjectDetailsPage({ params }: Props) {
   const { slug } = await params;
-  const project = await getProjectBySlug(slug);
+  const [project, allProjects] = await Promise.all([
+    getProjectBySlug(slug),
+    getAllProjects(),
+  ]);
 
   if (!project) {
     notFound();
   }
 
-  return <SmoothScroll><ProjectDetailsClient project={project} /></SmoothScroll>;
+  // Find next projects in the priority sequence
+  const currentIndex = allProjects.findIndex((p) => p.slug === project.slug);
+  const nextProjects: typeof allProjects = [];
+  if (allProjects.length > 1) {
+    for (let offset = 1; offset < allProjects.length && nextProjects.length < 2; offset++) {
+      const idx = (currentIndex + offset) % allProjects.length;
+      if (allProjects[idx].slug !== project.slug) {
+        nextProjects.push(allProjects[idx]);
+      }
+    }
+  }
+
+  return (
+    <SmoothScroll>
+      <ProjectDetailsClient project={project} nextProjects={nextProjects} />
+    </SmoothScroll>
+  );
 }

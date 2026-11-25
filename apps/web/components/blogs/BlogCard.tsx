@@ -13,7 +13,7 @@ export default function BlogCard({ blog }: { blog: Blog }) {
         {blog.mainImage ? (
           <Image
             src={blog.mainImage}
-            alt={blog.title}
+            alt={blog.mainImageAlt || blog.title || "Blog cover image"}
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, 50vw"
@@ -24,18 +24,21 @@ export default function BlogCard({ blog }: { blog: Blog }) {
           </div>
         )}
         
-        {blog.categories && blog.categories.length > 0 && (
-          <div className="absolute top-4 left-4 flex gap-2 flex-wrap z-10">
-            {blog.categories.slice(0, 2).map((cat) => (
-              <span 
-                key={cat.id} 
-                className="bg-background/90 backdrop-blur-sm text-foreground text-xs font-semibold px-2.5 py-1 rounded-full border border-border/50 shadow-sm"
-              >
-                {cat.title}
-              </span>
-            ))}
-          </div>
-        )}
+        <div className="absolute top-4 left-4 flex gap-2 flex-wrap z-10">
+          {blog.series?.part && (
+            <span className="bg-primary text-primary-foreground text-[11px] font-bold px-2.5 py-1 rounded-full shadow-sm">
+              Part {blog.series.part}
+            </span>
+          )}
+          {blog.categories && blog.categories.length > 0 && blog.categories.slice(0, 2).map((cat) => (
+            <span 
+              key={cat.id} 
+              className="bg-background/90 backdrop-blur-sm text-foreground text-xs font-semibold px-2.5 py-1 rounded-full border border-border/50 shadow-sm"
+            >
+              {cat.title}
+            </span>
+          ))}
+        </div>
         
         <div className="absolute inset-0 bg-linear-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>

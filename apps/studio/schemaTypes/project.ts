@@ -24,6 +24,14 @@ export default defineType({
       description: "URL-friendly identifier generated from the title. Click 'Generate' to create it.",
     }),
     defineField({
+      name: "priority",
+      title: "Display Priority / Order",
+      type: "number",
+      description: "Priority number for ordering (1 = top / first to appear, 2, 3, etc.). Lower numbers appear first on both Home and Projects pages.",
+      validation: (Rule) => Rule.min(1).integer(),
+      initialValue: 10,
+    }),
+    defineField({
       name: "liveUrl",
       title: "Project Live URL",
       type: "url",
@@ -281,11 +289,29 @@ export default defineType({
       description: "Structured list describing the technologies used.",
     }),
   ],
+  orderings: [
+    {
+      title: "Display Priority (Lowest number first)",
+      name: "priorityAsc",
+      by: [
+        { field: "priority", direction: "asc" },
+        { field: "startDate", direction: "desc" },
+      ],
+    },
+  ],
   preview: {
     select: {
       title: "title",
       media: "mainImage",
-      subtitle: "overview"
+      subtitle: "overview",
+      priority: "priority",
+    },
+    prepare({ title, media, subtitle, priority }: { title?: string; media?: any; subtitle?: string; priority?: number }) {
+      return {
+        title: priority !== undefined ? `[#${priority}] ${title || "Untitled"}` : (title || "Untitled"),
+        media,
+        subtitle,
+      };
     },
   },
 });

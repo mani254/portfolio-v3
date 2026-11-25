@@ -68,12 +68,12 @@ export default function ChatMessageBubble({ message }: ChatMessageProps) {
                     return match ? (
                       <code
                         {...props}
-                        className={cn("block bg-black/10 dark:bg-white/10 rounded p-2.5 overflow-x-auto text-[11px] font-mono whitespace-pre-wrap my-2", className)}
+                        className={cn("block bg-black/10 bg-black/8 rounded p-2.5 overflow-x-auto text-[11px] font-mono whitespace-pre-wrap my-2", className)}
                       >
                         {children}
                       </code>
                     ) : (
-                      <code {...props} className="bg-black/10 dark:bg-white/10 rounded px-1.5 py-0.5 text-[11px] font-mono">
+                      <code {...props} className="bg-black/10 bg-black/8 rounded px-1.5 py-0.5 text-[11px] font-mono">
                         {children}
                       </code>
                     )

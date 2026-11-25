@@ -20,10 +20,12 @@ export interface UserState {
 }
 
 export interface AuthActions {
-  login: (email: string, password: string) => Promise<{ ok: boolean; user?: AuthUser; status?: number; message?: string; data?: any }>;
-  register: (name: string, email: string, password: string) => Promise<{ ok: boolean; message: string; data?: any }>;
+  login: (email: string, password: string) => Promise<{ ok: boolean; user?: AuthUser; status?: number; message?: string; data?: unknown }>;
+  register: (name: string, email: string, password: string) => Promise<{ ok: boolean; message: string; data?: unknown }>;
   logout: () => Promise<void>;
   verifyOtp: (email: string, otp: string) => Promise<{ ok: boolean; message: string; verified: boolean }>;
   resendOtp: (email: string) => Promise<{ ok: boolean; message: string }>;
   loginWithGoogle: (redirectUrl?: string) => Promise<void>;
 }
+
+export type AuthState = AuthActions;

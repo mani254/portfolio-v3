@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { motion } from 'framer-motion';
-import { LogIn } from 'lucide-react';
 
 interface LoginFormProps {
     redirectUrl?: string;
@@ -18,7 +17,7 @@ interface LoginFormProps {
     isModal?: boolean;
 }
 
-export const LoginForm = ({ redirectUrl, onSuccess, onToggleRegister, isModal = false }: LoginFormProps) => {
+export const LoginForm = ({ redirectUrl, onSuccess, onToggleRegister, isModal: _isModal = false }: LoginFormProps) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -43,7 +42,7 @@ export const LoginForm = ({ redirectUrl, onSuccess, onToggleRegister, isModal = 
             }
             return;
         }
-        if (res.status === 403 && res.data?.requiresVerification) {
+        if (res.status === 403 && (res.data as { requiresVerification?: boolean })?.requiresVerification) {
             setError('Please verify your email first. Check your inbox.');
         } else {
             setError(res.message ?? 'Login failed');
@@ -141,7 +140,7 @@ export const LoginForm = ({ redirectUrl, onSuccess, onToggleRegister, isModal = 
             </div>
 
             <p className="text-center text-xs text-muted-foreground">
-                Don't have an account?{' '}
+                Don&apos;t have an account?{' '}
                 {onToggleRegister ? (
                     <button
                         onClick={onToggleRegister}
